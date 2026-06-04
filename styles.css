@@ -348,16 +348,28 @@ button.danger {
   font-weight: 600;
 }
 
+.chart-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.5rem;
+  flex-wrap: wrap;
+}
+.chart-header h3 { margin: 0; font-size: 1rem; }
+.chart-header .muted { font-size: 0.8rem; }
+
 .chart {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   height: 160px;          /* explicit height so child % heights resolve */
   display: flex;
   align-items: flex-end;
-  gap: 4px;
+  justify-content: flex-start;
+  gap: 6px;
   overflow-x: auto;
 }
 
@@ -368,8 +380,8 @@ button.danger {
 }
 
 .chart .bar {
-  min-width: 18px;
-  flex: 1;
+  width: 24px;            /* fixed width so 1 bar doesn't stretch */
+  flex: 0 0 24px;
   background: var(--accent);
   border-radius: 3px 3px 0 0;
   position: relative;
