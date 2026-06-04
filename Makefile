@@ -8,7 +8,7 @@ help:
 	@echo "  make stop   - kill server on PORT"
 
 serve: stop
-	@python3 -m http.server $(PORT) >/dev/null 2>&1 &
+	@python3 dev_server.py $(PORT) >/dev/null 2>&1 &
 	@sleep 0.4
 	@open "http://localhost:$(PORT)/"
 	@echo "Serving on http://localhost:$(PORT)/  (make stop to kill)"

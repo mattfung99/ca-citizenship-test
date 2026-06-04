@@ -7,6 +7,7 @@
   --accent: #c8102e;       /* Canadian red */
   --accent-dark: #8c0a20;
   --good: #137a47;
+  --good-dark: #0d5a34;
   --good-bg: #e6f4ec;
   --bad: #b3261e;
   --bad-bg: #fbe9e7;
@@ -52,18 +53,7 @@ header h1 {
   font-weight: 600;
 }
 
-header nav button {
-  margin-left: 0.5rem;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-header nav button:hover { background: var(--bg); }
+header nav button { margin-left: 0.5rem; }
 
 main {
   max-width: 760px;
@@ -73,37 +63,34 @@ main {
 
 h2 { margin-top: 0; }
 
-button.primary {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 0.6rem 1.1rem;
-  border-radius: var(--radius);
-  font-size: 1rem;
-  cursor: pointer;
-  font-weight: 500;
-}
-button.primary:hover { background: var(--accent-dark); }
-button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-button.ghost {
+/* --- Buttons ---
+   All buttons share the same size + style. Color is the only variant:
+   - default = grey outline
+   - .danger = red outline (Delete, Quit, Clear)
+*/
+button,
+.btn-like {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 0.6rem 1.1rem;
+  padding: 0.55rem 1rem;
   border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
   cursor: pointer;
-  font-size: 1rem;
+  display: inline-block;
+  transition: background-color 0.12s, color 0.12s, border-color 0.12s, opacity 0.12s;
 }
+button:hover,
+.btn-like:hover { background: var(--bg); border-color: var(--text); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button:disabled:hover { background: transparent; border-color: var(--border); }
 
 button.danger {
-  background: transparent;
-  border: 1px solid var(--bad);
+  border-color: var(--bad);
   color: var(--bad);
-  padding: 0.5rem 0.9rem;
-  border-radius: var(--radius);
-  cursor: pointer;
 }
+button.danger:hover { background: var(--bad); color: white; border-color: var(--bad); }
 
 .muted { color: var(--muted); font-size: 0.9rem; }
 .muted a { color: var(--muted); }
@@ -283,23 +270,26 @@ button.danger {
   gap: 1rem;
 }
 
-.results-summary .stat {
+/* Stat block: label on top, value below — used in results + history */
+.stat {
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
 }
-.results-summary .stat .label {
+.stat .label {
   font-size: 0.75rem;
   text-transform: uppercase;
   color: var(--muted);
   letter-spacing: 0.05em;
 }
-.results-summary .stat .value {
-  font-size: 1.6rem;
+.stat .value {
+  font-size: 1.4rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-.results-summary .stat .value.pass { color: var(--good); }
-.results-summary .stat .value.fail { color: var(--bad); }
+.results-summary .stat .value { font-size: 1.6rem; }
+.stat .value.pass { color: var(--good); }
+.stat .value.fail { color: var(--bad); }
 
 .review {
   list-style: none;
@@ -337,16 +327,7 @@ button.danger {
   gap: 1rem;
 }
 
-.history-stats .stat .label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  color: var(--muted);
-  letter-spacing: 0.05em;
-}
-.history-stats .stat .value {
-  font-size: 1.3rem;
-  font-weight: 600;
-}
+/* per-context value sizes handled by .stat above */
 
 .chart-header {
   display: flex;
@@ -363,9 +344,10 @@ button.danger {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1rem;
+  /* Extra top padding gives tooltips room without being clipped by overflow */
+  padding: 36px 1rem 1rem;
   margin-bottom: 1.5rem;
-  height: 160px;          /* explicit height so child % heights resolve */
+  height: 200px;          /* explicit height so child % heights resolve */
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
@@ -393,24 +375,21 @@ button.danger {
 
 .chart .bar:hover { opacity: 1; }
 
-.chart .bar::after {
-  content: attr(data-tip);
+/* Tooltip rendered as a single floating element attached to <body>, so it
+   can escape the chart's overflow clipping on either axis. See setupChartTooltip in app.js. */
+.chart-tip {
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
   background: var(--text);
   color: var(--bg);
-  padding: 0.2rem 0.4rem;
-  font-size: 0.7rem;
-  border-radius: 3px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
   white-space: nowrap;
-  opacity: 0;
+  transform: translateX(-50%);
   pointer-events: none;
-  transition: opacity 0.1s;
+  z-index: 1000;
+  box-shadow: var(--shadow);
 }
-
-.chart .bar:hover::after { opacity: 1; }
 
 .history-table {
   width: 100%;
@@ -428,7 +407,17 @@ button.danger {
   text-align: left;
   padding: 0.6rem 0.8rem;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;     /* keep cells on one line; the table itself scrolls if needed */
 }
+
+/* Wrap the table so it scrolls horizontally on narrow screens rather than mangling cells */
+.history-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.history-table-wrap .history-table { border: none; border-radius: 0; margin-bottom: 0; }
 
 .history-table th {
   font-size: 0.75rem;
@@ -445,40 +434,10 @@ button.danger {
   flex-wrap: wrap;
 }
 
-.history-table button.review-btn {
-  background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.85rem;
-  margin-right: 0.3rem;
-}
+.history-table td button { margin-right: 0.3rem; }
+.history-table td button:last-child { margin-right: 0; }
 
-.history-table button.review-btn:hover {
-  background: var(--accent);
-  color: white;
-}
-
-button.back {
-  margin-bottom: 1rem;
-}
-
-.history-actions button,
-.history-actions .btn-like {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 0.5rem 0.9rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.9rem;
-  display: inline-block;
-}
-
-.history-actions button:hover,
-.history-actions .btn-like:hover { background: var(--bg); }
+button.back { margin-bottom: 1rem; }
 
 .empty {
   text-align: center;

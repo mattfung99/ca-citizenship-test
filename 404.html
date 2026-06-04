@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redirecting…</title>
+  <script>
+    // GitHub Pages SPA fallback.
+    // Static hosts can't serve /history, /quiz, etc., so they return this page.
+    // We stash the requested path, bounce to the app root, and let index.html
+    // restore the URL via history.replaceState (see init() in app.js).
+    (function () {
+      var loc = window.location;
+      var fullPath = loc.pathname + loc.search + loc.hash;
+      try { sessionStorage.setItem('citz.spa-redirect', fullPath); } catch (e) {}
+
+      // Determine where the app lives.
+      // GH Pages project sites: /<repo>/ — first path segment is the repo name.
+      // User pages / custom domain / local dev: /
+      var isGHProject = /\.github\.io$/.test(loc.hostname);
+      var segs = loc.pathname.split('/').filter(Boolean);
+      var base = (isGHProject && segs.length > 0) ? '/' + segs[0] + '/' : '/';
+      loc.replace(base);
+    })();
+  </script>
+</head>
+<body>
+  <p style="font-family: system-ui, sans-serif; text-align: center; margin-top: 4rem;">Redirecting…</p>
+</body>
+</html>

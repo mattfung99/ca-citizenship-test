@@ -12,6 +12,7 @@ const state = {
   active: null,           // current attempt: { mode, items, answers, startedAt, durationLimitS, feedback }
   currentIdx: 0,
   timerHandle: null,
+  lastAttempt: null,      // for the /results route immediately after finishing
 };
 
 // ---------- helpers ----------
@@ -37,14 +38,84 @@ function fmtTime(seconds) {
 
 function fmtDate(iso) {
   const d = new Date(iso);
+  // Render in the device's local timezone, with the timezone abbreviation
+  // (e.g. "PDT", "EST") appended so it's unambiguous on import/export.
   return d.toLocaleString(undefined, {
     year: 'numeric', month: 'short', day: 'numeric',
     hour: '2-digit', minute: '2-digit',
+    timeZoneName: 'short',
   });
 }
 
 function show(viewId) {
   $$('.view').forEach(v => v.hidden = v.id !== viewId);
+}
+
+// ---------- router (path-based, History API) ----------
+// Routes: /  /history  /quiz  /results  /review/<id>
+// On GitHub Pages project sites, all of these are prefixed with the repo path
+// (e.g. /ca-citizenship-test/history). BASE captures that prefix.
+
+const BASE = (function () {
+  let p = window.location.pathname;
+  // If the user arrived directly at /something/index.html, strip the filename.
+  if (/\.html?$/.test(p)) p = p.replace(/[^/]*$/, '');
+  if (!p.endsWith('/')) p += '/';
+  return p;
+})();
+
+const routes = {
+  '': () => show('view-start'),
+  home: () => show('view-start'),
+  history: () => { renderHistory(); show('view-history'); window.scrollTo(0, 0); },
+  quiz: () => {
+    if (!state.active) { navigate(''); return; }
+    show('view-quiz');
+  },
+  results: () => {
+    if (!state.lastAttempt) { navigate('history'); return; }
+    show('view-results');
+  },
+  review: (id) => {
+    const a = loadResults().find(r => r.id === id);
+    if (!a) { navigate('history'); return; }
+    $('#attempt-title').textContent = `Attempt — ${fmtDate(a.finishedAt)}`;
+    renderSummary($('#attempt-summary'), a, { includeDate: true });
+    renderReview($('#attempt-review'), a.items);
+    show('view-attempt');
+    window.scrollTo(0, 0);
+  },
+};
+
+function currentSegments() {
+  const path = window.location.pathname;
+  const rel = path.startsWith(BASE) ? path.slice(BASE.length) : path.replace(/^\//, '');
+  return rel.split('/').filter(Boolean);
+}
+
+function route() {
+  const parts = currentSegments();
+  const seg = parts[0] || '';
+  const handler = routes[seg];
+
+  // Stop a running quiz if user navigates away
+  if (state.timerHandle && seg !== 'quiz') {
+    stopTimer();
+    state.active = null;
+  }
+
+  if (handler) handler(parts[1]);
+  else navigate('');
+}
+
+function navigate(seg) {
+  const url = BASE + (seg || '');
+  if (window.location.pathname === url) {
+    route();
+  } else {
+    window.history.pushState(null, '', url);
+    route();
+  }
 }
 
 // ---------- storage ----------
@@ -70,7 +141,11 @@ function recordAttempt(attempt) {
 // ---------- start ----------
 
 async function loadQuestions() {
-  const res = await fetch('questions.json');
+  // Use BASE so the fetch works regardless of the current route
+  // (e.g. when the user deep-links to /review/<id>, a relative fetch would
+  // resolve to /review/questions.json — which doesn't exist).
+  const res = await fetch(BASE + 'questions.json');
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   state.questions = await res.json();
 }
 
@@ -104,7 +179,7 @@ function startQuiz(mode) {
   state.currentIdx = 0;
 
   $('#quiz-mode-label').textContent = mode === 'real' ? 'Real Test' : 'Practice';
-  show('view-quiz');
+  navigate('quiz');
   startTimer();
   renderQuestion();
 }
@@ -265,8 +340,9 @@ function finishQuiz(timedOut) {
   };
 
   recordAttempt(attempt);
+  state.lastAttempt = attempt;
   renderResults(attempt, timedOut);
-  show('view-results');
+  navigate('results');
 }
 
 function renderSummary(container, attempt, opts = {}) {
@@ -308,13 +384,7 @@ function renderResults(attempt, timedOut) {
 }
 
 function viewAttempt(id) {
-  const attempt = loadResults().find(a => a.id === id);
-  if (!attempt) return;
-  $('#attempt-title').textContent = `Attempt — ${fmtDate(attempt.finishedAt)}`;
-  renderSummary($('#attempt-summary'), attempt, { includeDate: true });
-  renderReview($('#attempt-review'), attempt.items);
-  show('view-attempt');
-  window.scrollTo(0, 0);
+  navigate('review/' + encodeURIComponent(id));
 }
 
 function escapeHtml(s) {
@@ -377,12 +447,41 @@ function renderHistory() {
       <td>${a.pct}%</td>
       <td>${fmtTime(a.durationS)}${a.timedOut ? ' (timeout)' : ''}</td>
       <td>
-        ${hasItems ? `<button type="button" class="review-btn" data-review="${a.id}">Review</button>` : ''}
-        <button type="button" class="ghost" data-del="${a.id}">Delete</button>
+        ${hasItems ? `<button type="button" class="ghost" data-review="${a.id}">Review</button>` : ''}
+        <button type="button" class="danger" data-del="${a.id}">Delete</button>
       </td>
     `;
     tbody.appendChild(tr);
   });
+}
+
+// Single floating tooltip element attached to <body>. Bars on the chart trigger
+// it via delegated mouseover/mouseout — this avoids being clipped by chart overflow.
+function setupChartTooltip() {
+  const tip = document.createElement('div');
+  tip.className = 'chart-tip';
+  tip.hidden = true;
+  document.body.appendChild(tip);
+
+  function position(target) {
+    const r = target.getBoundingClientRect();
+    tip.style.top = (r.top + window.scrollY - tip.offsetHeight - 6) + 'px';
+    tip.style.left = (r.left + window.scrollX + r.width / 2) + 'px';
+  }
+
+  document.addEventListener('mouseover', e => {
+    const bar = e.target.closest?.('.chart .bar');
+    if (!bar) return;
+    tip.textContent = bar.dataset.tip || '';
+    tip.hidden = false;
+    position(bar);
+  });
+  document.addEventListener('mouseout', e => {
+    const bar = e.target.closest?.('.chart .bar');
+    if (!bar) return;
+    tip.hidden = true;
+  });
+  window.addEventListener('scroll', () => { tip.hidden = true; }, { passive: true });
 }
 
 function deleteAttempt(id) {
@@ -443,12 +542,11 @@ function clearAll() {
 // ---------- wire up ----------
 
 function init() {
-  // Nav
+  // Nav — all data-go buttons drive the router via hash
   $$('[data-go]').forEach(b => {
     b.addEventListener('click', () => {
-      const target = b.dataset.go;
-      if (target === 'history') renderHistory();
-      show('view-' + target);
+      const target = b.dataset.go === 'start' ? '' : b.dataset.go;
+      navigate(target);
     });
   });
 
@@ -463,7 +561,7 @@ function init() {
     if (confirm('Quit this quiz? Your attempt will not be saved.')) {
       stopTimer();
       state.active = null;
-      show('view-start');
+      navigate('');
     }
   });
 
@@ -482,9 +580,23 @@ function init() {
     if (delId && confirm('Delete this attempt?')) deleteAttempt(delId);
   });
 
-  loadQuestions().catch(err => {
-    document.body.innerHTML = `<main><p style="color:red">Failed to load questions.json: ${err.message}. Serve the site over HTTP (run <code>make</code>).</p></main>`;
-  });
+  // If 404.html stored a redirect (refresh on deep link via GH Pages), restore it now.
+  const stored = sessionStorage.getItem('citz.spa-redirect');
+  if (stored) {
+    sessionStorage.removeItem('citz.spa-redirect');
+    try { window.history.replaceState(null, '', stored); } catch (e) { /* ignore cross-origin */ }
+  }
+
+  // Browser back/forward
+  window.addEventListener('popstate', route);
+
+  setupChartTooltip();
+
+  loadQuestions()
+    .then(() => route())   // route once questions are available
+    .catch(err => {
+      document.body.innerHTML = `<main><p style="color:red">Failed to load questions.json: ${err.message}. Serve the site over HTTP (run <code>make</code>).</p></main>`;
+    });
 }
 
 document.addEventListener('DOMContentLoaded', init);

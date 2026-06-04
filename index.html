@@ -79,7 +79,7 @@
 
       <div class="quiz-actions">
         <button type="button" id="quiz-next" class="primary" disabled>Next</button>
-        <button type="button" id="quiz-quit" class="ghost">Quit</button>
+        <button type="button" id="quiz-quit" class="danger">Quit</button>
       </div>
     </section>
 
@@ -107,12 +107,14 @@
       <div id="history-chart" class="chart"></div>
 
       <h3>All attempts</h3>
-      <table id="history-table" class="history-table">
-        <thead>
-          <tr><th>Date</th><th>Mode</th><th>Score</th><th>%</th><th>Time</th><th></th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="history-table-wrap">
+        <table id="history-table" class="history-table">
+          <thead>
+            <tr><th>Date</th><th>Mode</th><th>Score</th><th>%</th><th>Time</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
 
       <div class="history-actions">
         <button type="button" id="export-btn">Download results (.json)</button>
