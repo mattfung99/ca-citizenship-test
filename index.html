@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Canadian Citizenship Test Practice</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Canadian Citizenship Test Practice</h1>
+    <nav>
+      <button type="button" data-go="start">Home</button>
+      <button type="button" data-go="history">History</button>
+    </nav>
+  </header>
+
+  <main id="app">
+    <!-- START -->
+    <section id="view-start" class="view">
+      <h2>Choose a mode</h2>
+
+      <div class="mode-grid">
+        <article class="mode-card">
+          <h3>Real Test</h3>
+          <p>20 questions, 45-minute timer. Pass with 15/20. No feedback until the end &mdash; matches the actual exam.</p>
+          <button type="button" class="primary" data-start="real">Start real test</button>
+        </article>
+
+        <article class="mode-card">
+          <h3>Practice</h3>
+          <p>No timer. Pick how many questions, and whether to see feedback immediately or at the end.</p>
+
+          <label>Questions
+            <select id="practice-count">
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="60">60</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+
+          <label>Feedback
+            <select id="practice-feedback">
+              <option value="immediate">After each question</option>
+              <option value="end">At end of quiz</option>
+            </select>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" id="practice-include-provincial" />
+            Include provincial questions (region-specific, may be dated)
+          </label>
+
+          <button type="button" class="primary" data-start="practice">Start practice</button>
+        </article>
+      </div>
+
+      <p class="muted">Questions sourced from
+        <a href="https://www.yourlibrary.ca/citizenship-test-answer-keys/" target="_blank" rel="noopener">Richmond Public Library</a>,
+        based on the <em>Discover Canada</em> study guide. Some answers reflect officials at the time of authoring.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="view-quiz" class="view" hidden>
+      <div class="quiz-header">
+        <div>
+          <span id="quiz-progress">Q 1 / 20</span>
+          <span id="quiz-mode-label" class="badge"></span>
+        </div>
+        <div id="quiz-timer" class="timer">00:00</div>
+      </div>
+
+      <h2 id="quiz-question">&nbsp;</h2>
+      <ol id="quiz-options" class="options"></ol>
+
+      <div id="quiz-feedback" class="feedback" hidden></div>
+
+      <div class="quiz-actions">
+        <button type="button" id="quiz-next" class="primary" disabled>Next</button>
+        <button type="button" id="quiz-quit" class="ghost">Quit</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="view-results" class="view" hidden>
+      <h2>Results</h2>
+      <div id="results-summary" class="results-summary"></div>
+      <h3>Review</h3>
+      <ol id="results-review" class="review"></ol>
+      <div class="quiz-actions">
+        <button type="button" class="primary" data-go="start">Back to home</button>
+        <button type="button" data-go="history">View history</button>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="view-history" class="view" hidden>
+      <h2>History</h2>
+      <div id="history-stats" class="history-stats"></div>
+      <div id="history-chart" class="chart"></div>
+      <table id="history-table" class="history-table">
+        <thead>
+          <tr><th>Date</th><th>Mode</th><th>Score</th><th>%</th><th>Time</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="history-actions">
+        <button type="button" id="export-btn">Download results (.json)</button>
+        <label class="import-label">
+          <input type="file" id="import-file" accept="application/json" hidden />
+          <span class="btn-like">Import results...</span>
+        </label>
+        <button type="button" id="clear-btn" class="danger">Clear all results</button>
+      </div>
+    </section>
+
+    <!-- ATTEMPT REVIEW -->
+    <section id="view-attempt" class="view" hidden>
+      <button type="button" class="ghost back" data-go="history">&larr; Back to history</button>
+      <h2 id="attempt-title">Attempt review</h2>
+      <div id="attempt-summary" class="results-summary"></div>
+      <h3>All questions</h3>
+      <ol id="attempt-review" class="review"></ol>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
