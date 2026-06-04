@@ -1,32 +1,41 @@
 :root {
-  --bg: #f7f7f5;
-  --surface: #ffffff;
-  --text: #1a1a1a;
-  --muted: #666;
-  --border: #e2e2e0;
-  --accent: #c8102e;       /* Canadian red */
+  /* color-scheme: light dark = follow OS by default; the data-theme overrides below pin it. */
+  color-scheme: light dark;
+
+  --bg:      light-dark(#f7f7f5, #161616);
+  --surface: light-dark(#ffffff, #1f1f1f);
+  --text:    light-dark(#1a1a1a, #ececec);
+  --muted:   light-dark(#666,    #9a9a9a);
+  --border:  light-dark(#e2e2e0, #333333);
+  --accent:      #c8102e;       /* Canadian red — same in both */
   --accent-dark: #8c0a20;
-  --good: #137a47;
-  --good-dark: #0d5a34;
-  --good-bg: #e6f4ec;
-  --bad: #b3261e;
-  --bad-bg: #fbe9e7;
+  --good:      light-dark(#137a47, #1a9858);
+  --good-dark: light-dark(#0d5a34, #0d5a34);
+  --good-bg:   light-dark(#e6f4ec, #143a26);
+  --bad:       light-dark(#b3261e, #d44a3f);
+  --bad-bg:    light-dark(#fbe9e7, #3a1614);
   --warn: #8a6d00;
   --shadow: 0 1px 2px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
   --radius: 8px;
 }
 
+/* Explicit toggle overrides the OS preference */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark;  }
+
+/* Theme toggle: icon-only, narrower padding than text buttons (height matches via base line-height) */
+.theme-toggle { padding: 0.55rem 0.65rem; }
+.theme-toggle svg { display: block; }
+.theme-toggle .icon-sun  { display: none; }
+.theme-toggle .icon-moon { display: block; }
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #161616;
-    --surface: #1f1f1f;
-    --text: #ececec;
-    --muted: #9a9a9a;
-    --border: #333;
-    --good-bg: #143a26;
-    --bad-bg: #3a1614;
-  }
+  .theme-toggle .icon-sun  { display: block; }
+  .theme-toggle .icon-moon { display: none; }
 }
+:root[data-theme="light"] .theme-toggle .icon-sun  { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+:root[data-theme="dark"]  .theme-toggle .icon-sun  { display: block; }
+:root[data-theme="dark"]  .theme-toggle .icon-moon { display: none; }
 
 * { box-sizing: border-box; }
 
@@ -53,7 +62,12 @@ header h1 {
   font-weight: 600;
 }
 
-header nav button { margin-left: 0.5rem; }
+header nav {
+  display: flex;
+  align-items: stretch;     /* all buttons fill the nav's height -> identical heights */
+  gap: 0.5rem;
+}
+header nav button { margin: 0; }
 
 main {
   max-width: 760px;
@@ -77,8 +91,14 @@ button,
   border-radius: var(--radius);
   font-size: 0.95rem;
   font-family: inherit;
+  /* Pinned line-height so text-buttons and icon-buttons end up the same height
+     (18px line ≈ 18px SVG). Without this, default 1.5 line-height adds ~5px to
+     text buttons and the toggle looks shorter. */
+  line-height: 1.2;
   cursor: pointer;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.12s, color 0.12s, border-color 0.12s, opacity 0.12s;
 }
 button:hover,

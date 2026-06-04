@@ -17,6 +17,20 @@ const state = {
 
 // ---------- helpers ----------
 
+const THEME_KEY = 'citz.theme';
+
+function currentTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  if (stored === 'light' || stored === 'dark') return stored;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function toggleTheme() {
+  const next = currentTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem(THEME_KEY, next);
+}
+
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return Array.from(document.querySelectorAll(sel)); }
 
@@ -542,6 +556,9 @@ function clearAll() {
 // ---------- wire up ----------
 
 function init() {
+  // Theme toggle (persistent light/dark)
+  $('#theme-toggle')?.addEventListener('click', toggleTheme);
+
   // Nav — all data-go buttons drive the router via hash
   $$('[data-go]').forEach(b => {
     b.addEventListener('click', () => {

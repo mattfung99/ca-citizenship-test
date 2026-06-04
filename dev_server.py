@@ -19,10 +19,13 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
         return super().send_head()
 
 
+class ReusableServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
+
 def main() -> None:
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8001
-    with socketserver.TCPServer(("", port), SPAHandler) as httpd:
-        httpd.allow_reuse_address = True
+    with ReusableServer(("", port), SPAHandler) as httpd:
         print(f"Serving on http://localhost:{port}/  (Ctrl+C to stop)")
         httpd.serve_forever()
 
