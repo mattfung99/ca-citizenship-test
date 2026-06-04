@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Canadian Citizenship Test Practice</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="src/styles.css" />
   <script>
     // Apply stored theme before first paint to avoid a flash.
     try {
@@ -75,9 +75,10 @@
         </article>
       </div>
 
-      <p class="muted">Questions sourced from
-        <a href="https://www.yourlibrary.ca/citizenship-test-answer-keys/" target="_blank" rel="noopener">Richmond Public Library</a>,
-        based on the <em>Discover Canada</em> study guide. Some answers reflect officials at the time of authoring.</p>
+      <p class="muted">Questions sourced from the
+        <a href="https://www.yourlibrary.ca/citizenship-test-answer-keys/" target="_blank" rel="noopener">Richmond Public Library</a>
+        answer keys and <a href="https://www.mycitizen.ca/full-simulation-tests.html" target="_blank" rel="noopener">mycitizen.ca</a>
+        simulation tests, based on the <em>Discover Canada</em> study guide. Some answers reflect officials at the time of authoring.</p>
     </section>
 
     <!-- QUIZ -->
@@ -137,7 +138,7 @@
       <div class="history-actions">
         <button type="button" id="export-btn">Download results (.json)</button>
         <label class="import-label">
-          <input type="file" id="import-file" accept="application/json" hidden />
+          <input type="file" id="import-file" accept="application/json" multiple hidden />
           <span class="btn-like">Import results...</span>
         </label>
         <button type="button" id="clear-btn" class="danger">Clear all results</button>
@@ -154,6 +155,6 @@
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <script src="src/app.js"></script>
 </body>
 </html>

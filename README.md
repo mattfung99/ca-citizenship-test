@@ -46,7 +46,7 @@ Results are saved to `localStorage` under the key `citz.results`. The History pa
 ### Export / import
 
 - **Download results (.json)** — saves a portable JSON file
-- **Import results...** — merges a previously exported file (skips duplicates by attempt id)
+- **Import results...** — select one or more exported JSON files; all are merged in a single pass (duplicates skipped by attempt id). Use this to consolidate results from different devices/browsers.
 - **Clear all results** — wipes localStorage (after confirmation)
 
 Use export to back up before clearing the browser cache or to sync between devices.
@@ -54,9 +54,10 @@ Use export to back up before clearing the browser cache or to sync between devic
 ## File layout
 
 ```
-index.html        single-page app shell (start / quiz / results / history views)
-app.js            state machine, timer, scoring, persistence, export/import
-styles.css        minimal styling (system-ui font, light/dark via prefers-color-scheme)
-questions.json    the question bank
-Makefile          local server convenience
+index.html          single-page app shell (start / quiz / results / history views)
+src/
+  app.js            state machine, timer, scoring, persistence, export/import
+  styles.css        minimal styling (system-ui font, light/dark via prefers-color-scheme)
+questions.json      the question bank
+Makefile            local server convenience
 ```

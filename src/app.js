@@ -516,35 +516,54 @@ function exportResults() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  const stamp = new Date().toISOString().slice(0, 10);
+  const stamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
   a.download = `citizenship-results-${stamp}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-async function importResults(file) {
-  try {
-    const text = await file.text();
-    const data = JSON.parse(text);
-    const incoming = Array.isArray(data) ? data : data.results;
-    if (!Array.isArray(incoming)) throw new Error('Invalid file: no results array.');
+async function importResults(files) {
+  // Accept a single File or a FileList / array of Files.
+  const fileList = (files instanceof FileList || Array.isArray(files)) ? Array.from(files) : [files];
 
-    // Merge by id (newer entries with same id win — but typically all ids are unique by Date.now()).
-    const existing = loadResults();
-    const byId = new Map(existing.map(a => [a.id, a]));
-    let added = 0;
-    incoming.forEach(a => {
-      if (a && a.id && !byId.has(a.id)) {
-        byId.set(a.id, a);
-        added++;
-      }
-    });
-    saveResults(Array.from(byId.values()));
-    alert(`Imported ${added} new attempt(s). Skipped ${incoming.length - added} duplicate(s).`);
-    renderHistory();
-  } catch (err) {
-    alert(`Import failed: ${err.message}`);
+  const existing = loadResults();
+  const byId = new Map(existing.map(a => [a.id, a]));
+
+  let totalAdded = 0;
+  let totalSkipped = 0;
+  const errors = [];
+
+  for (const file of fileList) {
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const incoming = Array.isArray(data) ? data : data.results;
+      if (!Array.isArray(incoming)) throw new Error('No results array found.');
+
+      incoming.forEach(a => {
+        if (a && a.id) {
+          if (!byId.has(a.id)) {
+            byId.set(a.id, a);
+            totalAdded++;
+          } else {
+            totalSkipped++;
+          }
+        }
+      });
+    } catch (err) {
+      errors.push(`${file.name}: ${err.message}`);
+    }
   }
+
+  saveResults(Array.from(byId.values()));
+
+  const parts = [];
+  if (fileList.length > 1) parts.push(`${fileList.length} files merged.`);
+  parts.push(`Added ${totalAdded} new attempt(s), skipped ${totalSkipped} duplicate(s).`);
+  if (errors.length) parts.push(`Errors:\n${errors.join('\n')}`);
+  alert(parts.join('\n'));
+
+  renderHistory();
 }
 
 function clearAll() {
@@ -585,8 +604,7 @@ function init() {
   // History actions
   $('#export-btn').addEventListener('click', exportResults);
   $('#import-file').addEventListener('change', e => {
-    const f = e.target.files[0];
-    if (f) importResults(f);
+    if (e.target.files.length) importResults(e.target.files);
     e.target.value = '';
   });
   $('#clear-btn').addEventListener('click', clearAll);
