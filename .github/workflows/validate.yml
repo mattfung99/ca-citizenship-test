@@ -1,0 +1,63 @@
+name: Validate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate questions.json
+        run: python3 -m json.tool questions.json > /dev/null
+
+      - name: Question count summary
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+
+          with open("questions.json") as f:
+              data = json.load(f)
+
+          federal    = data.get("federal", [])
+          provincial = data.get("provincial", [])
+          total      = len(federal) + len(provincial)
+
+          FEDERAL_MIN    = 400
+          PROVINCIAL_MIN = 75
+
+          print(f"Federal questions:    {len(federal)}")
+          print(f"Provincial questions: {len(provincial)}")
+          print(f"Total:                {total}")
+
+          errors = []
+          if len(federal) < FEDERAL_MIN:
+              errors.append(
+                  f"Federal count dropped below minimum ({len(federal)} < {FEDERAL_MIN})"
+              )
+          if len(provincial) < PROVINCIAL_MIN:
+              errors.append(
+                  f"Provincial count dropped below minimum ({len(provincial)} < {PROVINCIAL_MIN})"
+              )
+
+          # Spot-check required fields on every question
+          required = {"question", "options", "correct", "source"}
+          bad = []
+          for pool_name, pool in [("federal", federal), ("provincial", provincial)]:
+              for i, q in enumerate(pool):
+                  missing = required - q.keys()
+                  if missing:
+                      bad.append(f"  {pool_name}[{i}] missing fields: {missing}")
+          if bad:
+              errors.append("Questions with missing fields:\n" + "\n".join(bad[:20]))
+
+          if errors:
+              for e in errors:
+                  print(f"::error::{e}")
+              sys.exit(1)
+
+          print("All checks passed.")
+          EOF
