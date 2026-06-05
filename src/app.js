@@ -173,20 +173,24 @@ function loadLocalResults() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
 }
 
-function loadPendingSync() {
-  try { return JSON.parse(localStorage.getItem(PENDING_SYNC_KEY)) || []; } catch { return []; }
+// Scope by user id so a queued attempt belonging to one account can never be
+// drained into a different account when multiple users share a browser.
+function pendingSyncKey(userId) { return `${PENDING_SYNC_KEY}:${userId}`; }
+
+function loadPendingSync(userId) {
+  try { return JSON.parse(localStorage.getItem(pendingSyncKey(userId))) || []; } catch { return []; }
 }
 
-function appendPendingSync(attempt) {
-  const all = loadPendingSync();
+function appendPendingSync(userId, attempt) {
+  const all = loadPendingSync(userId);
   all.push(attempt);
-  localStorage.setItem(PENDING_SYNC_KEY, JSON.stringify(all));
+  localStorage.setItem(pendingSyncKey(userId), JSON.stringify(all));
 }
 
 // Best-effort: try to upload anything queued during prior failures. Silent — if
 // it fails again the queue is left intact for the next attempt.
 async function drainPendingSync(user) {
-  const pending = loadPendingSync();
+  const pending = loadPendingSync(user.id);
   if (pending.length === 0) return;
   const rows = pending.map(a => ({
     id:          a.id,
@@ -195,7 +199,7 @@ async function drainPendingSync(user) {
     finished_at: a.finishedAt,
   }));
   const { error } = await sbClient.from('attempts').upsert(rows);
-  if (!error) localStorage.removeItem(PENDING_SYNC_KEY);
+  if (!error) localStorage.removeItem(pendingSyncKey(user.id));
 }
 
 async function loadResults() {
@@ -230,7 +234,7 @@ async function recordAttempt(attempt) {
     } catch (err) {
       // Don't lose the user's result on network/RLS/size failure — queue it
       // locally and surface what happened.
-      appendPendingSync(attempt);
+      appendPendingSync(state.user.id, attempt);
       alert(
         'Could not save this result to your account right now.\n' +
         'It has been kept locally and will sync next time you sign in.\n\n' +
@@ -633,6 +637,9 @@ async function renderHistory() {
     const mode    = a.mode === 'real' ? 'Real test' : 'Practice';
     const verdict = a.passed === true ? ' · PASS' : a.passed === false ? ' · FAIL' : '';
     const hasItems = Array.isArray(a.items) && a.items.length > 0;
+    // a.id originates from import in some cases — escape before inlining into
+    // attribute context so a crafted id can't break out of the data-* quotes.
+    const safeId = escapeHtml(a.id);
     tr.innerHTML = `
       <td>${fmtDate(a.finishedAt)}</td>
       <td>${mode}${verdict}</td>
@@ -640,8 +647,8 @@ async function renderHistory() {
       <td>${a.pct}%</td>
       <td>${fmtTime(a.durationS)}${a.timedOut ? ' (timeout)' : ''}</td>
       <td>
-        ${hasItems ? `<button type="button" class="ghost" data-review="${a.id}">Review</button>` : ''}
-        <button type="button" class="danger" data-del="${a.id}">Delete</button>
+        ${hasItems ? `<button type="button" class="ghost" data-review="${safeId}">Review</button>` : ''}
+        <button type="button" class="danger" data-del="${safeId}">Delete</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -695,16 +702,31 @@ async function exportResults() {
   URL.revokeObjectURL(url);
 }
 
+// Defence-in-depth: imported attempts are user-controlled JSON and end up
+// rendered in History, stored in Supabase, and sorted by finishedAt. Reject
+// anything whose id could break out of an HTML attribute or whose finishedAt
+// won't parse — the rest of the shape is allowed through but obviously bogus
+// rows just won't render usefully.
+const SAFE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
+function isValidImportedAttempt(a) {
+  return (
+    a && typeof a === 'object' &&
+    typeof a.id === 'string' && SAFE_ID_RE.test(a.id) &&
+    typeof a.finishedAt === 'string' && Number.isFinite(Date.parse(a.finishedAt))
+  );
+}
+
 async function importResults(files) {
   const fileList = (files instanceof FileList || Array.isArray(files)) ? Array.from(files) : [files];
 
   const existing = await loadResults();
   const byId = new Map(existing.map(a => [a.id, a]));
 
-  let totalAdded   = 0;
-  let totalSkipped = 0;
-  const toUpsert   = [];
-  const errors     = [];
+  let totalAdded    = 0;
+  let totalSkipped  = 0;
+  let totalRejected = 0;
+  const toUpsert    = [];
+  const errors      = [];
 
   for (const file of fileList) {
     try {
@@ -714,14 +736,16 @@ async function importResults(files) {
       if (!Array.isArray(incoming)) throw new Error('No results array found.');
 
       incoming.forEach(a => {
-        if (a && a.id) {
-          if (!byId.has(a.id)) {
-            byId.set(a.id, a);
-            toUpsert.push(a);
-            totalAdded++;
-          } else {
-            totalSkipped++;
-          }
+        if (!isValidImportedAttempt(a)) {
+          totalRejected++;
+          return;
+        }
+        if (!byId.has(a.id)) {
+          byId.set(a.id, a);
+          toUpsert.push(a);
+          totalAdded++;
+        } else {
+          totalSkipped++;
         }
       });
     } catch (err) {
@@ -755,6 +779,7 @@ async function importResults(files) {
   const parts = [];
   if (fileList.length > 1) parts.push(`${fileList.length} files merged.`);
   parts.push(`Added ${totalAdded} new attempt(s), skipped ${totalSkipped} duplicate(s).`);
+  if (totalRejected > 0) parts.push(`Rejected ${totalRejected} malformed attempt(s).`);
   if (errors.length) parts.push(`Errors:\n${errors.join('\n')}`);
   alert(parts.join('\n'));
 
