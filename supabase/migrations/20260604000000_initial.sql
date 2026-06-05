@@ -18,3 +18,8 @@ create policy "own attempts only" on attempts
   for all
   using  (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- Grant table access to signed-in users.
+-- RLS policies above enforce row-level isolation; this grant just allows
+-- the authenticated role to reach the table at all.
+grant select, insert, update, delete on attempts to authenticated;

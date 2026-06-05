@@ -269,11 +269,11 @@ function updateNavAuth(user) {
   const emailEl   = $('#nav-user-email');
   if (user) {
     signInBtn.hidden = true;
-    userPanel.classList.add('visible');
+    userPanel.hidden = false;
     emailEl.textContent = user.email;
   } else {
     signInBtn.hidden = false;
-    userPanel.classList.remove('visible');
+    userPanel.hidden = true;
   }
 }
 
