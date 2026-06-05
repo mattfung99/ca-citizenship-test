@@ -487,18 +487,23 @@ button.back { margin-bottom: 1rem; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg);
+  border: 1.5px solid var(--muted);
+  background: var(--surface);
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: default;
   flex-shrink: 0;
   user-select: none;
   position: relative;
+  transition: border-color 0.12s;
+}
+
+.nav-avatar:hover {
+  border-color: var(--text);
 }
 
 .nav-avatar::after {
