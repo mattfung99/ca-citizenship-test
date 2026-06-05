@@ -264,13 +264,15 @@ async function deleteAttempt(id) {
 
 function updateNavAuth(user) {
   state.user = user;
-  const signInBtn = $('#nav-signin');
-  const userPanel = $('#nav-user');
-  const emailEl   = $('#nav-user-email');
+  const signInBtn  = $('#nav-signin');
+  const userPanel  = $('#nav-user');
+  const avatarEl   = $('#nav-user-avatar');
   if (user) {
     signInBtn.hidden = true;
     userPanel.hidden = false;
-    emailEl.textContent = user.email;
+    avatarEl.textContent = user.email[0].toUpperCase();
+    avatarEl.title = user.email;
+    avatarEl.setAttribute('aria-label', `Signed in as ${user.email}`);
   } else {
     signInBtn.hidden = false;
     userPanel.hidden = true;
