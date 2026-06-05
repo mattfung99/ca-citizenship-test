@@ -466,21 +466,17 @@ button.back { margin-bottom: 1rem; }
   font-style: italic;
 }
 
-/* --- Primary button variant --- */
-button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: white;
-}
-button.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
-button.primary:disabled:hover { background: var(--accent); border-color: var(--accent); }
+/* .primary has no extra styling — same as the default button outline */
 
 /* --- Nav auth indicator --- */
+/* Use a class rather than the hidden attribute so display:inline-flex doesn't
+   fight the browser's [hidden] { display:none } rule (author CSS wins). */
 #nav-user {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 0.5rem;
 }
+#nav-user.visible { display: inline-flex; }
 
 .nav-email {
   font-size: 0.85rem;

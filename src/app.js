@@ -264,16 +264,16 @@ async function deleteAttempt(id) {
 
 function updateNavAuth(user) {
   state.user = user;
-  const signInBtn   = $('#nav-signin');
-  const userPanel   = $('#nav-user');
-  const emailEl     = $('#nav-user-email');
+  const signInBtn = $('#nav-signin');
+  const userPanel = $('#nav-user');
+  const emailEl   = $('#nav-user-email');
   if (user) {
     signInBtn.hidden = true;
-    userPanel.hidden = false;
+    userPanel.classList.add('visible');
     emailEl.textContent = user.email;
   } else {
     signInBtn.hidden = false;
-    userPanel.hidden = true;
+    userPanel.classList.remove('visible');
   }
 }
 
@@ -862,6 +862,12 @@ async function init() {
   sbClient.auth.onAuthStateChange(async (event, session) => {
     const user = session?.user ?? null;
     updateNavAuth(user);
+
+    // Strip the Supabase token hash left in the URL after a magic-link callback
+    // (e.g. /#access_token=... or the leftover /#/).
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
 
     // SIGNED_IN fires on token refresh too, so gate the one-time side effects
     // on a flag rather than the previous user state.
