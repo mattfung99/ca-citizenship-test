@@ -1,18 +1,28 @@
 // Canadian Citizenship Test Practice - app logic
-// State machine: start -> quiz -> results, plus history view.
-// Persistence: localStorage key 'citz.results' (array of attempt objects).
+// State machine: start -> quiz -> results, plus history and login views.
+// Storage: Supabase (when signed in) or localStorage (guest fallback).
 
-const STORAGE_KEY = 'citz.results';
-const REAL_TEST_COUNT = 20;
+const STORAGE_KEY        = 'citz.results';
+const MIGRATION_SKIP_KEY = 'citz.migration-skipped';  // suffixed with ':<user-id>' per account
+const PENDING_SYNC_KEY   = 'citz.pending-sync';
+const REAL_TEST_COUNT    = 20;
 const REAL_TEST_DURATION_S = 45 * 60;
-const REAL_TEST_PASS = 15;
+const REAL_TEST_PASS     = 15;
+// A hair under the server-side 100 KB CHECK constraint to leave headroom for
+// jsonb canonicalisation (sorted keys, escape sequences) inflating the row.
+const MAX_ROW_BYTES      = 102000;
+
+const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const state = {
-  questions: null,        // { federal, provincial }
-  active: null,           // current attempt: { mode, items, answers, startedAt, durationLimitS, feedback }
-  currentIdx: 0,
+  questions:   null,   // { federal, provincial }
+  active:      null,   // current attempt in progress
+  currentIdx:  0,
   timerHandle: null,
-  lastAttempt: null,      // for the /results route immediately after finishing
+  lastAttempt: null,   // for the /results route immediately after finishing
+  user:        null,   // Supabase user object, or null for guests
+  handledInitialAuth: false,  // gate the one-time post-sign-in side effects
+  cachedResults: null, // last successful Supabase fetch, used as offline fallback
 };
 
 // ---------- helpers ----------
@@ -52,8 +62,6 @@ function fmtTime(seconds) {
 
 function fmtDate(iso) {
   const d = new Date(iso);
-  // Render in the device's local timezone, with the timezone abbreviation
-  // (e.g. "PDT", "EST") appended so it's unambiguous on import/export.
   return d.toLocaleString(undefined, {
     year: 'numeric', month: 'short', day: 'numeric',
     hour: '2-digit', minute: '2-digit',
@@ -65,23 +73,44 @@ function show(viewId) {
   $$('.view').forEach(v => v.hidden = v.id !== viewId);
 }
 
-// ---------- router (path-based, History API) ----------
-// Routes: /  /history  /quiz  /results  /review/<id>
-// On GitHub Pages project sites, all of these are prefixed with the repo path
-// (e.g. /ca-citizenship-test/history). BASE captures that prefix.
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ---------- router ----------
+// Routes: /  /login  /history  /quiz  /results  /review/<id>
+// On GitHub Pages project sites the path is prefixed with the repo name.
+// BASE captures that prefix so all navigations stay within the right root.
 
 const BASE = (function () {
   let p = window.location.pathname;
-  // If the user arrived directly at /something/index.html, strip the filename.
   if (/\.html?$/.test(p)) p = p.replace(/[^/]*$/, '');
   if (!p.endsWith('/')) p += '/';
   return p;
 })();
 
 const routes = {
-  '': () => show('view-start'),
-  home: () => show('view-start'),
-  history: () => { renderHistory(); show('view-history'); window.scrollTo(0, 0); },
+  '':      () => show('view-start'),
+  home:    () => show('view-start'),
+  login:   () => {
+    if (state.user) { navigate('history'); return; }
+    $('#login-form').hidden = false;
+    $('#login-sent').hidden = true;
+    const btn = $('#login-submit');
+    btn.disabled = false;
+    btn.textContent = 'Send magic link';
+    $('#login-email').value = '';
+    show('view-login');
+  },
+  history: async () => {
+    show('view-history');
+    window.scrollTo(0, 0);
+    await renderHistory();
+  },
   quiz: () => {
     if (!state.active) { navigate(''); return; }
     show('view-quiz');
@@ -90,14 +119,16 @@ const routes = {
     if (!state.lastAttempt) { navigate('history'); return; }
     show('view-results');
   },
-  review: (id) => {
-    const a = loadResults().find(r => r.id === id);
+  review: async (id) => {
+    show('view-attempt');
+    window.scrollTo(0, 0);
+    $('#attempt-title').textContent = 'Loading…';
+    const all = await loadResults();
+    const a = all.find(r => r.id === id);
     if (!a) { navigate('history'); return; }
     $('#attempt-title').textContent = `Attempt — ${fmtDate(a.finishedAt)}`;
     renderSummary($('#attempt-summary'), a, { includeDate: true });
     renderReview($('#attempt-review'), a.items);
-    show('view-attempt');
-    window.scrollTo(0, 0);
   },
 };
 
@@ -112,14 +143,17 @@ function route() {
   const seg = parts[0] || '';
   const handler = routes[seg];
 
-  // Stop a running quiz if user navigates away
   if (state.timerHandle && seg !== 'quiz') {
     stopTimer();
     state.active = null;
   }
 
-  if (handler) handler(parts[1]);
-  else navigate('');
+  if (handler) {
+    const result = handler(parts[1]);
+    if (result instanceof Promise) result.catch(err => console.error('Route error:', err));
+  } else {
+    navigate('');
+  }
 }
 
 function navigate(seg) {
@@ -133,31 +167,180 @@ function navigate(seg) {
 }
 
 // ---------- storage ----------
+// Guests:      read/write localStorage only — zero Supabase calls.
+// Signed-in:   read/write Supabase; localStorage is not touched.
 
-function loadResults() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch {
-    return [];
+function loadLocalResults() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+}
+
+function loadPendingSync() {
+  try { return JSON.parse(localStorage.getItem(PENDING_SYNC_KEY)) || []; } catch { return []; }
+}
+
+function appendPendingSync(attempt) {
+  const all = loadPendingSync();
+  all.push(attempt);
+  localStorage.setItem(PENDING_SYNC_KEY, JSON.stringify(all));
+}
+
+// Best-effort: try to upload anything queued during prior failures. Silent — if
+// it fails again the queue is left intact for the next attempt.
+async function drainPendingSync(user) {
+  const pending = loadPendingSync();
+  if (pending.length === 0) return;
+  const rows = pending.map(a => ({
+    id:          a.id,
+    user_id:     user.id,
+    data:        a,
+    finished_at: a.finishedAt,
+  }));
+  const { error } = await sbClient.from('attempts').upsert(rows);
+  if (!error) localStorage.removeItem(PENDING_SYNC_KEY);
+}
+
+async function loadResults() {
+  if (state.user) {
+    try {
+      const { data, error } = await sbClient
+        .from('attempts')
+        .select('data')
+        .eq('user_id', state.user.id)
+        .order('finished_at');
+      if (error) throw error;
+      state.cachedResults = (data ?? []).map(r => r.data);
+      return state.cachedResults;
+    } catch (err) {
+      if (state.cachedResults) return state.cachedResults;
+      throw err;
+    }
+  }
+  return loadLocalResults();
+}
+
+async function recordAttempt(attempt) {
+  if (state.user) {
+    try {
+      const { error } = await sbClient.from('attempts').upsert({
+        id:          attempt.id,
+        user_id:     state.user.id,
+        data:        attempt,
+        finished_at: attempt.finishedAt,
+      });
+      if (error) throw error;
+    } catch (err) {
+      // Don't lose the user's result on network/RLS/size failure — queue it
+      // locally and surface what happened.
+      appendPendingSync(attempt);
+      alert(
+        'Could not save this result to your account right now.\n' +
+        'It has been kept locally and will sync next time you sign in.\n\n' +
+        err.message
+      );
+    }
+  } else {
+    const all = loadLocalResults();
+    all.push(attempt);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
   }
 }
 
-function saveResults(arr) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+async function deleteAttempt(id) {
+  if (state.user) {
+    const { error } = await sbClient
+      .from('attempts')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', state.user.id);
+    if (error) { alert(`Delete failed: ${error.message}`); return; }
+  } else {
+    const all = loadLocalResults().filter(a => a.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  }
+  await renderHistory();
 }
 
-function recordAttempt(attempt) {
-  const all = loadResults();
-  all.push(attempt);
-  saveResults(all);
+// ---------- auth ----------
+
+function updateNavAuth(user) {
+  state.user = user;
+  const signInBtn   = $('#nav-signin');
+  const userPanel   = $('#nav-user');
+  const emailEl     = $('#nav-user-email');
+  if (user) {
+    signInBtn.hidden = true;
+    userPanel.hidden = false;
+    emailEl.textContent = user.email;
+  } else {
+    signInBtn.hidden = false;
+    userPanel.hidden = true;
+  }
+}
+
+async function sendMagicLink(email) {
+  const redirectTo = window.location.origin + BASE;
+  const { error } = await sbClient.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: redirectTo },
+  });
+  if (error) throw error;
+}
+
+async function signOut() {
+  await sbClient.auth.signOut();
+  navigate('');
+}
+
+// On first login, offer to upload any existing localStorage results.
+// The skip flag is keyed by user id so a "no" on a shared device doesn't bleed
+// across accounts.
+async function offerLocalMigration(user) {
+  const local = loadLocalResults();
+  if (local.length === 0) return;
+  const skipKey = `${MIGRATION_SKIP_KEY}:${user.id}`;
+  if (localStorage.getItem(skipKey)) return;
+
+  const ok = confirm(
+    `You have ${local.length} result(s) saved locally.\nUpload them to your account so they appear in History?`
+  );
+  if (!ok) {
+    localStorage.setItem(skipKey, '1');
+    return;
+  }
+
+  const valid     = local.filter(a => JSON.stringify(a).length < MAX_ROW_BYTES);
+  const oversized = local.filter(a => JSON.stringify(a).length >= MAX_ROW_BYTES);
+
+  if (valid.length > 0) {
+    const rows = valid.map(a => ({
+      id:          a.id,
+      user_id:     user.id,
+      data:        a,
+      finished_at: a.finishedAt,
+    }));
+    const { error } = await sbClient.from('attempts').upsert(rows);
+    if (error) {
+      alert(`Upload failed: ${error.message}`);
+      return;
+    }
+  }
+
+  // Keep only the rows we couldn't upload; clear the skip flag so the user can
+  // be re-prompted if they later add more.
+  if (oversized.length === 0) localStorage.removeItem(STORAGE_KEY);
+  else localStorage.setItem(STORAGE_KEY, JSON.stringify(oversized));
+  localStorage.removeItem(skipKey);
+
+  let msg = `Uploaded ${valid.length} result(s) to your account.`;
+  if (oversized.length > 0) {
+    msg += `\n\n${oversized.length} result(s) were too large to upload and remain saved locally.`;
+  }
+  alert(msg);
 }
 
 // ---------- start ----------
 
 async function loadQuestions() {
-  // Use BASE so the fetch works regardless of the current route
-  // (e.g. when the user deep-links to /review/<id>, a relative fetch would
-  // resolve to /review/questions.json — which doesn't exist).
   const res = await fetch(BASE + 'questions.json');
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   state.questions = await res.json();
@@ -184,7 +367,7 @@ function startQuiz(mode) {
   state.active = {
     mode,
     items,
-    answers: new Array(items.length).fill(null),  // selected option index per question
+    answers: new Array(items.length).fill(null),
     startedAt: new Date().toISOString(),
     startedMs: Date.now(),
     durationLimitS,
@@ -226,10 +409,8 @@ function elapsedS() {
   return (Date.now() - state.active.startedMs) / 1000;
 }
 
-function updTimerEl() { return $('#quiz-timer'); }
-
 function updateTimerDisplay() {
-  const el = updTimerEl();
+  const el = $('#quiz-timer');
   el.classList.remove('warning', 'danger');
   if (state.active.durationLimitS !== null) {
     const remaining = state.active.durationLimitS - elapsedS();
@@ -301,8 +482,6 @@ function renderQuestion() {
 
 function selectOption(i) {
   const idx = state.currentIdx;
-  // For end-of-quiz feedback, allow changing the answer freely.
-  // For immediate feedback, only allow first selection.
   if (state.active.feedback === 'immediate' && state.active.answers[idx] !== null) return;
   state.active.answers[idx] = i;
   renderQuestion();
@@ -320,7 +499,7 @@ function goNext() {
 
 // ---------- finish ----------
 
-function finishQuiz(timedOut) {
+async function finishQuiz(timedOut) {
   stopTimer();
   const a = state.active;
   const elapsed = Math.floor(elapsedS());
@@ -332,7 +511,7 @@ function finishQuiz(timedOut) {
   const passed = a.mode === 'real' ? correctCount >= REAL_TEST_PASS : null;
 
   const attempt = {
-    id: 'a_' + Date.now(),
+    id: crypto.randomUUID(),
     mode: a.mode,
     startedAt: a.startedAt,
     finishedAt: new Date().toISOString(),
@@ -346,16 +525,16 @@ function finishQuiz(timedOut) {
     feedback: a.feedback,
     items: a.items.map((q, i) => ({
       question: q.question,
-      options: q.options,
-      correct: q.correct,
+      options:  q.options,
+      correct:  q.correct,
       selected: a.answers[i],
       category: q.category,
     })),
   };
 
-  recordAttempt(attempt);
+  await recordAttempt(attempt);
   state.lastAttempt = attempt;
-  renderResults(attempt, timedOut);
+  renderResults(attempt);
   navigate('results');
 }
 
@@ -392,7 +571,7 @@ function renderReview(container, items) {
   });
 }
 
-function renderResults(attempt, timedOut) {
+function renderResults(attempt) {
   renderSummary($('#results-summary'), attempt);
   renderReview($('#results-review'), attempt.items);
 }
@@ -401,34 +580,38 @@ function viewAttempt(id) {
   navigate('review/' + encodeURIComponent(id));
 }
 
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 // ---------- history ----------
 
-function renderHistory() {
-  const all = loadResults().slice().sort((a, b) => a.finishedAt.localeCompare(b.finishedAt));
-
+async function renderHistory() {
   const statsEl = $('#history-stats');
   const chartEl = $('#history-chart');
-  const tbody = $('#history-table tbody');
+  const tbody   = $('#history-table tbody');
+
+  statsEl.innerHTML = '<div class="empty">Loading…</div>';
+  chartEl.innerHTML = '';
+  tbody.innerHTML   = '';
+
+  let all;
+  try {
+    all = (await loadResults()).slice().sort((a, b) => a.finishedAt.localeCompare(b.finishedAt));
+  } catch (err) {
+    statsEl.innerHTML =
+      `<div class="empty">Could not load history: ${escapeHtml(err.message)}. ` +
+      `<button type="button" id="history-retry">Retry</button></div>`;
+    $('#history-retry').addEventListener('click', () => renderHistory());
+    return;
+  }
 
   if (all.length === 0) {
     statsEl.innerHTML = '<div class="empty">No attempts yet. Take a quiz to start tracking your progress.</div>';
     chartEl.innerHTML = '<div class="empty">Your scores will appear here.</div>';
-    tbody.innerHTML = '';
     return;
   }
 
   const totalAttempts = all.length;
   const avgPct = Math.round(all.reduce((s, a) => s + a.pct, 0) / totalAttempts);
   const best = Math.max(...all.map(a => a.pct));
-  const realTests = all.filter(a => a.mode === 'real');
+  const realTests  = all.filter(a => a.mode === 'real');
   const realPasses = realTests.filter(a => a.passed).length;
 
   statsEl.innerHTML = `
@@ -448,10 +631,9 @@ function renderHistory() {
     chartEl.appendChild(bar);
   });
 
-  tbody.innerHTML = '';
   all.slice().reverse().forEach(a => {
     const tr = document.createElement('tr');
-    const mode = a.mode === 'real' ? 'Real test' : 'Practice';
+    const mode    = a.mode === 'real' ? 'Real test' : 'Practice';
     const verdict = a.passed === true ? ' · PASS' : a.passed === false ? ' · FAIL' : '';
     const hasItems = Array.isArray(a.items) && a.items.length > 0;
     tr.innerHTML = `
@@ -469,8 +651,7 @@ function renderHistory() {
   });
 }
 
-// Single floating tooltip element attached to <body>. Bars on the chart trigger
-// it via delegated mouseover/mouseout — this avoids being clipped by chart overflow.
+// Single floating tooltip for chart bars — avoids overflow clipping.
 function setupChartTooltip() {
   const tip = document.createElement('div');
   tip.className = 'chart-tip';
@@ -479,7 +660,7 @@ function setupChartTooltip() {
 
   function position(target) {
     const r = target.getBoundingClientRect();
-    tip.style.top = (r.top + window.scrollY - tip.offsetHeight - 6) + 'px';
+    tip.style.top  = (r.top + window.scrollY - tip.offsetHeight - 6) + 'px';
     tip.style.left = (r.left + window.scrollX + r.width / 2) + 'px';
   }
 
@@ -498,23 +679,18 @@ function setupChartTooltip() {
   window.addEventListener('scroll', () => { tip.hidden = true; }, { passive: true });
 }
 
-function deleteAttempt(id) {
-  const all = loadResults().filter(a => a.id !== id);
-  saveResults(all);
-  renderHistory();
-}
-
 // ---------- export / import ----------
 
-function exportResults() {
+async function exportResults() {
+  const results = await loadResults();
   const data = {
     exportedAt: new Date().toISOString(),
     version: 1,
-    results: loadResults(),
+    results,
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
   a.href = url;
   const stamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
   a.download = `citizenship-results-${stamp}.json`;
@@ -523,15 +699,15 @@ function exportResults() {
 }
 
 async function importResults(files) {
-  // Accept a single File or a FileList / array of Files.
   const fileList = (files instanceof FileList || Array.isArray(files)) ? Array.from(files) : [files];
 
-  const existing = loadResults();
+  const existing = await loadResults();
   const byId = new Map(existing.map(a => [a.id, a]));
 
-  let totalAdded = 0;
+  let totalAdded   = 0;
   let totalSkipped = 0;
-  const errors = [];
+  const toUpsert   = [];
+  const errors     = [];
 
   for (const file of fileList) {
     try {
@@ -544,6 +720,7 @@ async function importResults(files) {
         if (a && a.id) {
           if (!byId.has(a.id)) {
             byId.set(a.id, a);
+            toUpsert.push(a);
             totalAdded++;
           } else {
             totalSkipped++;
@@ -555,7 +732,28 @@ async function importResults(files) {
     }
   }
 
-  saveResults(Array.from(byId.values()));
+  if (toUpsert.length > 0) {
+    if (state.user) {
+      const valid     = toUpsert.filter(a => JSON.stringify(a).length < MAX_ROW_BYTES);
+      const oversized = toUpsert.filter(a => JSON.stringify(a).length >= MAX_ROW_BYTES);
+      if (valid.length > 0) {
+        const rows = valid.map(a => ({
+          id:          a.id,
+          user_id:     state.user.id,
+          data:        a,
+          finished_at: a.finishedAt,
+        }));
+        const { error } = await sbClient.from('attempts').upsert(rows);
+        if (error) { alert(`Import failed: ${error.message}`); return; }
+      }
+      if (oversized.length > 0) {
+        totalAdded -= oversized.length;
+        errors.push(`${oversized.length} attempt(s) skipped (too large to upload).`);
+      }
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(byId.values())));
+    }
+  }
 
   const parts = [];
   if (fileList.length > 1) parts.push(`${fileList.length} files merged.`);
@@ -563,22 +761,28 @@ async function importResults(files) {
   if (errors.length) parts.push(`Errors:\n${errors.join('\n')}`);
   alert(parts.join('\n'));
 
-  renderHistory();
+  await renderHistory();
 }
 
-function clearAll() {
+async function clearAll() {
   if (!confirm('Delete all saved results? This cannot be undone (unless you exported them).')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  renderHistory();
+  if (state.user) {
+    const { error } = await sbClient
+      .from('attempts')
+      .delete()
+      .eq('user_id', state.user.id);
+    if (error) { alert(`Error: ${error.message}`); return; }
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+  await renderHistory();
 }
 
 // ---------- wire up ----------
 
-function init() {
-  // Theme toggle (persistent light/dark)
+async function init() {
   $('#theme-toggle')?.addEventListener('click', toggleTheme);
 
-  // Nav — all data-go buttons drive the router via hash
   $$('[data-go]').forEach(b => {
     b.addEventListener('click', () => {
       const target = b.dataset.go === 'start' ? '' : b.dataset.go;
@@ -586,12 +790,10 @@ function init() {
     });
   });
 
-  // Start buttons
   $$('[data-start]').forEach(b => {
     b.addEventListener('click', () => startQuiz(b.dataset.start));
   });
 
-  // Quiz
   $('#quiz-next').addEventListener('click', goNext);
   $('#quiz-quit').addEventListener('click', () => {
     if (confirm('Quit this quiz? Your attempt will not be saved.')) {
@@ -601,7 +803,6 @@ function init() {
     }
   });
 
-  // History actions
   $('#export-btn').addEventListener('click', exportResults);
   $('#import-file').addEventListener('change', e => {
     if (e.target.files.length) importResults(e.target.files);
@@ -615,23 +816,87 @@ function init() {
     if (delId && confirm('Delete this attempt?')) deleteAttempt(delId);
   });
 
-  // If 404.html stored a redirect (refresh on deep link via GH Pages), restore it now.
+  // Login form
+  $('#login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = $('#login-email').value.trim();
+    if (!email) return;
+    const btn = $('#login-submit');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      await sendMagicLink(email);
+      $('#login-form').hidden = true;
+      $('#login-sent').hidden = false;
+    } catch (err) {
+      alert(`Error: ${err.message}`);
+      btn.disabled = false;
+      btn.textContent = 'Send magic link';
+    }
+  });
+
+  $('#nav-signout').addEventListener('click', signOut);
+
+  // Start questions fetch in parallel with auth restore so guests pay no
+  // startup cost waiting on Supabase. Attach a no-op handler to avoid an
+  // unhandled-rejection warning if it errors before we await it below.
+  const questionsPromise = loadQuestions();
+  questionsPromise.catch(() => {});
+
+  // Auth: restore existing session, then subscribe to changes
+  const { data: { session } } = await sbClient.auth.getSession();
+
+  // Strip access_token/refresh_token from the URL hash after a magic-link
+  // round-trip so the JWT doesn't linger in browser history or screen shares.
+  if (session?.user && /access_token=|refresh_token=/.test(window.location.hash)) {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+
+  updateNavAuth(session?.user ?? null);
+  if (session?.user) {
+    state.handledInitialAuth = true;
+    await drainPendingSync(session.user);
+    await offerLocalMigration(session.user);
+  }
+
+  sbClient.auth.onAuthStateChange(async (event, session) => {
+    const user = session?.user ?? null;
+    updateNavAuth(user);
+
+    // SIGNED_IN fires on token refresh too, so gate the one-time side effects
+    // on a flag rather than the previous user state.
+    if (event === 'SIGNED_IN' && user && !state.handledInitialAuth) {
+      state.handledInitialAuth = true;
+      await drainPendingSync(user);
+      await offerLocalMigration(user);
+      // Only auto-navigate when the user is actually on /login — don't yank
+      // them off the home page.
+      if (currentSegments()[0] === 'login') navigate('history');
+    }
+
+    if (event === 'SIGNED_OUT') {
+      state.handledInitialAuth = false;
+      state.cachedResults = null;
+      navigate('');
+    }
+  });
+
+  // GH Pages SPA deep-link redirect restore
   const stored = sessionStorage.getItem('citz.spa-redirect');
   if (stored) {
     sessionStorage.removeItem('citz.spa-redirect');
-    try { window.history.replaceState(null, '', stored); } catch (e) { /* ignore cross-origin */ }
+    try { window.history.replaceState(null, '', stored); } catch (e) { /* cross-origin guard */ }
   }
 
-  // Browser back/forward
   window.addEventListener('popstate', route);
-
   setupChartTooltip();
 
-  loadQuestions()
-    .then(() => route())   // route once questions are available
-    .catch(err => {
-      document.body.innerHTML = `<main><p style="color:red">Failed to load questions.json: ${err.message}. Serve the site over HTTP (run <code>make</code>).</p></main>`;
-    });
+  try {
+    await questionsPromise;
+    route();
+  } catch (err) {
+    document.body.innerHTML = `<main><p style="color:red">Failed to load questions.json: ${err.message}. Serve the site over HTTP (run <code>make</code>).</p></main>`;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

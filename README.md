@@ -51,13 +51,40 @@ Results are saved to `localStorage` under the key `citz.results`. The History pa
 
 Use export to back up before clearing the browser cache or to sync between devices.
 
+## Supabase setup
+
+History syncs across devices when signed in. The backend is [Supabase](https://supabase.com) (free tier).
+
+### One-time dashboard config (already done)
+
+1. **Authentication → Policies** — sign ups disabled (invite-only)
+2. **Authentication → Sign In / Providers → Email** — magic link enabled
+3. **Authentication → URL Configuration** — GitHub Pages URL + `http://localhost:8001/` added as redirect URLs
+4. **Settings → Integrations → GitHub** — connected to this repo; migrations in `supabase/migrations/` auto-deploy on push to `master`
+
+### Inviting users
+
+Authentication → Users → **Invite** — enter the email address. The user receives a magic link and is added to the account on first click.
+
+### Adding credentials
+
+Put your Supabase Project URL and anon key in `src/config.js`. The anon key is intentionally public — security is enforced via Row Level Security (RLS) on the database, not by keeping the key secret. Never put the `service_role` key in this file.
+
+### Guest access
+
+Users who are not signed in can still take quizzes. Results are saved to `localStorage` only. On first sign-in, the app offers to upload any locally stored results to the account.
+
 ## File layout
 
 ```
-index.html          single-page app shell (start / quiz / results / history views)
+index.html               single-page app shell (start / login / quiz / results / history views)
 src/
-  app.js            state machine, timer, scoring, persistence, export/import
-  styles.css        minimal styling (system-ui font, light/dark via prefers-color-scheme)
-questions.json      the question bank
-Makefile            local server convenience
+  app.js                 state machine, auth, Supabase storage, export/import
+  styles.css             minimal styling (system-ui font, light/dark via prefers-color-scheme)
+  config.js              public Supabase credentials (anon key, safe to commit)
+supabase/
+  migrations/
+    20260604000000_initial.sql   attempts table, RLS policy, size constraint
+questions.json           the question bank
+Makefile                 local server convenience
 ```
