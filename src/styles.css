@@ -544,7 +544,8 @@ button.back { margin-bottom: 1rem; }
   color: var(--muted);
 }
 
-.login-form input[type="email"] {
+.login-form input[type="email"],
+.login-form input[type="password"] {
   padding: 0.55rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -555,7 +556,8 @@ button.back { margin-bottom: 1rem; }
   width: 100%;
 }
 
-.login-form input[type="email"]:focus {
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
   border-color: var(--accent);
