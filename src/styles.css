@@ -563,3 +563,9 @@ button.back { margin-bottom: 1rem; }
   border-color: var(--accent);
 }
 
+.login-form input:-webkit-autofill,
+.login-form input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset;
+  -webkit-text-fill-color: var(--text);
+}
+
