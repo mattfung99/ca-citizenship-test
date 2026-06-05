@@ -1,6 +1,6 @@
 # Canadian Citizenship Test Practice
 
-A static, no-backend practice app for the Canadian citizenship test.
+A practice app for the Canadian citizenship test. Runs as a static site with optional Supabase-backed account sync.
 
 ## Quick start
 
@@ -38,18 +38,20 @@ The current pull was done with throwaway Python scripts; if you want to re-run o
 
 ## Progress tracking
 
-Results are saved to `localStorage` under the key `citz.results`. The History page shows:
+When signed in, results are saved to Supabase and sync across devices automatically. When not signed in (guest), results are saved to `localStorage` only. On first sign-in the app offers to upload any locally stored results to the account.
+
+The History page shows:
 - Aggregate stats (attempts, average %, best %, real tests passed)
 - A bar chart over time
 - Per-attempt table with delete
 
 ### Export / import
 
-- **Download results (.json)** — saves a portable JSON file
-- **Import results...** — select one or more exported JSON files; all are merged in a single pass (duplicates skipped by attempt id). Use this to consolidate results from different devices/browsers.
-- **Clear all results** — wipes localStorage (after confirmation)
+- **Download results (.json)** — exports all results (from Supabase if signed in, localStorage if guest)
+- **Import results...** — select one or more exported JSON files; all are merged in a single pass (duplicates skipped by attempt id). When signed in, imports go directly to Supabase.
+- **Clear all results** — deletes from Supabase (signed in) or wipes localStorage (guest), after confirmation
 
-Use export to back up before clearing the browser cache or to sync between devices.
+Use export to back up before clearing the browser cache.
 
 ## Supabase setup
 
@@ -61,6 +63,8 @@ History syncs across devices when signed in. The backend is [Supabase](https://s
 2. **Authentication → Sign In / Providers → Email** — magic link enabled
 3. **Authentication → URL Configuration** — GitHub Pages URL + `http://localhost:8001/` added as redirect URLs
 4. **Settings → Integrations → GitHub** — connected to this repo; migrations in `supabase/migrations/` auto-deploy on push to `master`
+5. **Settings → Emails → Custom SMTP** — Resend configured to lift the default 2 emails/hour rate limit
+6. After first deploy, run in SQL Editor: `grant select, insert, update, delete on attempts to authenticated;`
 
 ### Inviting users
 
