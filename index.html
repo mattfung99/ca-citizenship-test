@@ -98,16 +98,15 @@
     <!-- LOGIN -->
     <section id="view-login" class="view" hidden>
       <h2>Sign in</h2>
-      <p class="muted">Enter your email and we'll send you a sign-in link. No password needed.</p>
       <form id="login-form" class="login-form">
         <label>Email address
           <input type="email" id="login-email" autocomplete="email" required placeholder="you@example.com" />
         </label>
-        <button type="submit" id="login-submit" class="primary">Send magic link</button>
+        <label>Password
+          <input type="password" id="login-password" autocomplete="current-password" required />
+        </label>
+        <button type="submit" id="login-submit" class="primary">Sign in</button>
       </form>
-      <p id="login-sent" hidden class="login-sent">
-        Check your email &mdash; a sign-in link is on its way. You can close this tab.
-      </p>
     </section>
 
     <!-- QUIZ -->

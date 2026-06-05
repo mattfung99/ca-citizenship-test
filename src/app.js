@@ -98,12 +98,11 @@ const routes = {
   home:    () => show('view-start'),
   login:   () => {
     if (state.user) { navigate('history'); return; }
-    $('#login-form').hidden = false;
-    $('#login-sent').hidden = true;
     const btn = $('#login-submit');
     btn.disabled = false;
-    btn.textContent = 'Send magic link';
+    btn.textContent = 'Sign in';
     $('#login-email').value = '';
+    $('#login-password').value = '';
     show('view-login');
   },
   history: async () => {
@@ -279,12 +278,8 @@ function updateNavAuth(user) {
   }
 }
 
-async function sendMagicLink(email) {
-  const redirectTo = window.location.origin + BASE;
-  const { error } = await sbClient.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: redirectTo },
-  });
+async function signInWithPassword(email, password) {
+  const { error } = await sbClient.auth.signInWithPassword({ email, password });
   if (error) throw error;
 }
 
@@ -821,19 +816,19 @@ async function init() {
   // Login form
   $('#login-form').addEventListener('submit', async e => {
     e.preventDefault();
-    const email = $('#login-email').value.trim();
-    if (!email) return;
+    const email    = $('#login-email').value.trim();
+    const password = $('#login-password').value;
+    if (!email || !password) return;
     const btn = $('#login-submit');
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = 'Signing in…';
     try {
-      await sendMagicLink(email);
-      $('#login-form').hidden = true;
-      $('#login-sent').hidden = false;
+      await signInWithPassword(email, password);
+      // onAuthStateChange handles the redirect
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      alert(`Sign in failed: ${err.message}`);
       btn.disabled = false;
-      btn.textContent = 'Send magic link';
+      btn.textContent = 'Sign in';
     }
   });
 
