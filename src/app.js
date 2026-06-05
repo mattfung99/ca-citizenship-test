@@ -271,7 +271,7 @@ function updateNavAuth(user) {
     signInBtn.hidden = true;
     userPanel.hidden = false;
     avatarEl.textContent = user.email[0].toUpperCase();
-    avatarEl.title = user.email;
+    avatarEl.dataset.tooltip = user.email;
     avatarEl.setAttribute('aria-label', `Signed in as ${user.email}`);
   } else {
     signInBtn.hidden = false;
