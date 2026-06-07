@@ -21,7 +21,15 @@
 <body>
   <header>
     <h1>Canadian Citizenship Test Practice</h1>
-    <nav>
+    <button type="button" id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <svg class="icon-hamburger" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+      <svg class="icon-close" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <nav id="main-nav">
       <div class="nav-group">
         <button type="button" data-go="start">Home</button>
         <button type="button" data-go="history">History</button>
@@ -148,12 +156,12 @@
       <div id="history-stats" class="history-stats"></div>
 
       <div class="chart-header">
-        <h3>Score over time</h3>
-        <span class="muted">Each bar is one attempt &middot; oldest on the left, newest on the right &middot; hover for details</span>
+        <h3>Results Performance</h3>
+        <span class="muted">Each bar is one result &middot; oldest on the left, newest on the right &middot; hover for details</span>
       </div>
       <div id="history-chart" class="chart"></div>
 
-      <h3>All attempts</h3>
+      <h3>All Results</h3>
       <div class="history-table-wrap">
         <table id="history-table" class="history-table">
           <thead>
@@ -169,14 +177,14 @@
           <input type="file" id="import-file" accept="application/json" multiple hidden />
           <span class="btn-like">Import results...</span>
         </label>
-        <button type="button" id="clear-btn" class="danger">Clear all results</button>
+        <button type="button" id="clear-btn" class="danger">Delete all results</button>
       </div>
     </section>
 
     <!-- ATTEMPT REVIEW -->
     <section id="view-attempt" class="view" hidden>
       <button type="button" class="ghost back" data-go="history">&larr; Back to history</button>
-      <h2 id="attempt-title">Attempt review</h2>
+      <h2 id="attempt-title">Result review</h2>
       <div id="attempt-summary" class="results-summary"></div>
       <h3>All questions</h3>
       <ol id="attempt-review" class="review"></ol>

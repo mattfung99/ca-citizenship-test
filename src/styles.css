@@ -77,6 +77,81 @@ header nav {
 
 header nav button { margin: 0; }
 
+/* --- Hamburger toggle (mobile only) --- */
+.nav-toggle {
+  display: none;
+  padding: 0.55rem 0.65rem;
+}
+.nav-toggle svg { display: block; }
+.nav-toggle .icon-close { display: none; }
+header.nav-open .nav-toggle .icon-hamburger { display: none; }
+header.nav-open .nav-toggle .icon-close    { display: block; }
+
+@media (max-width: 640px) {
+  header {
+    position: relative;
+  }
+  .nav-toggle {
+    display: inline-flex;
+  }
+  #main-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  header.nav-open #main-nav {
+    display: flex;
+  }
+  .nav-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* Divider between the two nav groups */
+  .nav-group + .nav-group {
+    border-top: 1px solid var(--border);
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
+  }
+  /* Menu-item style: borderless, full-width rows */
+  #main-nav button {
+    border: none;
+    border-radius: 0;
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    justify-content: flex-start;
+    background: transparent;
+  }
+  #main-nav button:hover {
+    background: var(--bg);
+    border-color: transparent;
+  }
+  #main-nav .theme-toggle {
+    justify-content: center;
+  }
+  /* Signed-in: avatar circle + Sign out as a padded row */
+  #nav-user {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 0.75rem;
+    padding: 0.25rem 1.25rem;
+  }
+  /* Sign out takes the remaining row width */
+  #nav-signout {
+    flex: 1;
+    padding: 0.75rem 1rem;
+  }
+}
+
 main {
   max-width: 760px;
   margin: 0 auto;
@@ -446,6 +521,14 @@ button.danger:hover { background: var(--bad); color: white; border-color: var(--
   border-radius: var(--radius);
 }
 .history-table-wrap .history-table { border: none; border-radius: 0; margin-bottom: 0; }
+
+/* On mobile drop the least-critical columns so the table fits without scrolling */
+@media (max-width: 640px) {
+  .history-table th:nth-child(4),
+  .history-table td:nth-child(4),
+  .history-table th:nth-child(5),
+  .history-table td:nth-child(5) { display: none; }
+}
 
 .history-table th {
   font-size: 0.75rem;

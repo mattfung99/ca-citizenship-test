@@ -125,7 +125,7 @@ const routes = {
     const all = await loadResults();
     const a = all.find(r => r.id === id);
     if (!a) { navigate('history'); return; }
-    $('#attempt-title').textContent = `Attempt — ${fmtDate(a.finishedAt)}`;
+    $('#attempt-title').textContent = `Result — ${fmtDate(a.finishedAt)}`;
     renderSummary($('#attempt-summary'), a, { includeDate: true });
     renderReview($('#attempt-review'), a.items);
   },
@@ -604,7 +604,7 @@ async function renderHistory() {
   }
 
   if (all.length === 0) {
-    statsEl.innerHTML = '<div class="empty">No attempts yet. Take a quiz to start tracking your progress.</div>';
+    statsEl.innerHTML = '<div class="empty">No results yet. Take a quiz to start tracking your progress.</div>';
     chartEl.innerHTML = '<div class="empty">Your scores will appear here.</div>';
     return;
   }
@@ -616,7 +616,7 @@ async function renderHistory() {
   const realPasses = realTests.filter(a => a.passed).length;
 
   statsEl.innerHTML = `
-    <div class="stat"><span class="label">Attempts</span><span class="value">${totalAttempts}</span></div>
+    <div class="stat"><span class="label">Results</span><span class="value">${totalAttempts}</span></div>
     <div class="stat"><span class="label">Average</span><span class="value">${avgPct}%</span></div>
     <div class="stat"><span class="label">Best</span><span class="value">${best}%</span></div>
     <div class="stat"><span class="label">Real tests passed</span><span class="value">${realPasses} / ${realTests.length}</span></div>
@@ -625,8 +625,10 @@ async function renderHistory() {
   chartEl.innerHTML = '';
   all.forEach(a => {
     const bar = document.createElement('div');
-    bar.className = 'bar';
-    if (a.mode === 'real') bar.classList.add(a.passed ? 'pass' : 'fail');
+    // Colour by whether the score meets the real-test passing threshold (75 %)
+    // regardless of mode, so practice runs also go green when they would have passed.
+    const wouldPass = a.mode === 'real' ? a.passed : a.pct >= 75;
+    bar.className = `bar ${wouldPass ? 'pass' : 'fail'}`;
     bar.style.height = `${Math.max(4, a.pct)}%`;
     bar.dataset.tip = `${fmtDate(a.finishedAt)} · ${a.pct}% (${a.correct}/${a.total})`;
     chartEl.appendChild(bar);
@@ -769,7 +771,7 @@ async function importResults(files) {
       }
       if (oversized.length > 0) {
         totalAdded -= oversized.length;
-        errors.push(`${oversized.length} attempt(s) skipped (too large to upload).`);
+        errors.push(`${oversized.length} result(s) skipped (too large to upload).`);
       }
     } else {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(byId.values())));
@@ -778,8 +780,8 @@ async function importResults(files) {
 
   const parts = [];
   if (fileList.length > 1) parts.push(`${fileList.length} files merged.`);
-  parts.push(`Added ${totalAdded} new attempt(s), skipped ${totalSkipped} duplicate(s).`);
-  if (totalRejected > 0) parts.push(`Rejected ${totalRejected} malformed attempt(s).`);
+  parts.push(`Added ${totalAdded} new result(s), skipped ${totalSkipped} duplicate(s).`);
+  if (totalRejected > 0) parts.push(`Rejected ${totalRejected} malformed result(s).`);
   if (errors.length) parts.push(`Errors:\n${errors.join('\n')}`);
   alert(parts.join('\n'));
 
@@ -802,7 +804,26 @@ async function clearAll() {
 
 // ---------- wire up ----------
 
+function closeNav() {
+  const hdr = $('header');
+  hdr.classList.remove('nav-open');
+  $('#nav-toggle').setAttribute('aria-expanded', 'false');
+}
+
 async function init() {
+  // Mobile hamburger menu
+  $('#nav-toggle').addEventListener('click', e => {
+    e.stopPropagation();
+    const open = $('header').classList.toggle('nav-open');
+    $('#nav-toggle').setAttribute('aria-expanded', String(open));
+  });
+  // Close when any nav item is activated
+  $('#main-nav').addEventListener('click', closeNav);
+  // Close on outside tap/click
+  document.addEventListener('click', e => {
+    if (!$('header').contains(e.target)) closeNav();
+  });
+
   $('#theme-toggle')?.addEventListener('click', toggleTheme);
 
   $$('[data-go]').forEach(b => {
@@ -818,7 +839,7 @@ async function init() {
 
   $('#quiz-next').addEventListener('click', goNext);
   $('#quiz-quit').addEventListener('click', () => {
-    if (confirm('Quit this quiz? Your attempt will not be saved.')) {
+    if (confirm('Quit this quiz? Your result will not be saved.')) {
       stopTimer();
       state.active = null;
       navigate('');
@@ -835,7 +856,7 @@ async function init() {
     const reviewId = e.target.dataset?.review;
     if (reviewId) { viewAttempt(reviewId); return; }
     const delId = e.target.dataset?.del;
-    if (delId && confirm('Delete this attempt?')) deleteAttempt(delId);
+    if (delId && confirm('Delete this result?')) deleteAttempt(delId);
   });
 
   // Login form
