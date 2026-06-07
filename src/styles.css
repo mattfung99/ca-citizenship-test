@@ -647,9 +647,9 @@ button.back { margin-bottom: 1rem; }
 
 .login-form input[type="email"]:focus,
 .login-form input[type="password"]:focus {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--text);
   outline-offset: 1px;
-  border-color: var(--accent);
+  border-color: var(--text);
 }
 
 .login-form input:-webkit-autofill,
