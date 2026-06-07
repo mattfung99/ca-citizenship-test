@@ -604,8 +604,8 @@ async function renderHistory() {
   }
 
   if (all.length === 0) {
-    statsEl.innerHTML = '<div class="empty">No results yet. Take a quiz to start tracking your progress.</div>';
-    chartEl.innerHTML = '<div class="empty">Your scores will appear here.</div>';
+    statsEl.innerHTML = '<div class="empty">No results yet. Take a practice test to start tracking your progress.</div>';
+    chartEl.innerHTML = '<div class="empty">Your results will appear here.</div>';
     return;
   }
 
