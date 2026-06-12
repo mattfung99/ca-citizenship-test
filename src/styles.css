@@ -316,13 +316,13 @@ button.danger:hover { background: var(--bad); color: white; border-color: var(--
   transition: border-color 0.1s, background 0.1s;
 }
 
-.options li:hover { border-color: var(--accent); }
-.options li.selected { border-color: var(--accent); background: var(--bg); }
+.options li:hover { border-color: var(--text); }
+.options li.selected { border-color: var(--text); background: var(--bg); }
 .options li.correct { border-color: var(--good); background: var(--good-bg); }
 .options li.incorrect { border-color: var(--bad); background: var(--bad-bg); }
 .options li.locked { cursor: default; }
 .options li.locked:hover { border-color: inherit; }
-.options li.locked.selected:not(.correct):not(.incorrect) { border-color: var(--accent); }
+.options li.locked.selected:not(.correct):not(.incorrect) { border-color: var(--text); }
 
 .options .marker {
   display: inline-flex;
@@ -524,10 +524,19 @@ button.danger:hover { background: var(--bad); color: white; border-color: var(--
 
 /* On mobile drop the least-critical columns so the table fits without scrolling */
 @media (max-width: 640px) {
+  /* Hide Mode (2), % (4), Time (5) — leaves Date / Score / Actions */
+  .history-table th:nth-child(2),
+  .history-table td:nth-child(2),
   .history-table th:nth-child(4),
   .history-table td:nth-child(4),
   .history-table th:nth-child(5),
   .history-table td:nth-child(5) { display: none; }
+
+  /* Tighter action buttons so Review + Delete fit beside Score */
+  .history-table td button {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+  }
 }
 
 .history-table th {

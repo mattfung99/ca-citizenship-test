@@ -69,6 +69,15 @@ function fmtDate(iso) {
   });
 }
 
+// Shorter date for table cells — no timezone, fits narrow screens.
+function fmtDateShort(iso) {
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, {
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: 'numeric', minute: '2-digit',
+  });
+}
+
 function show(viewId) {
   $$('.view').forEach(v => v.hidden = v.id !== viewId);
 }
@@ -643,7 +652,7 @@ async function renderHistory() {
     // attribute context so a crafted id can't break out of the data-* quotes.
     const safeId = escapeHtml(a.id);
     tr.innerHTML = `
-      <td>${fmtDate(a.finishedAt)}</td>
+      <td title="${escapeHtml(fmtDate(a.finishedAt))}">${escapeHtml(fmtDateShort(a.finishedAt))}</td>
       <td>${mode}${verdict}</td>
       <td>${a.correct} / ${a.total}</td>
       <td>${a.pct}%</td>
