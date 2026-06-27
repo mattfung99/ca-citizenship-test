@@ -35,11 +35,13 @@ jobs:
           key  = re.search(r"SUPABASE_ANON_KEY\s+=\s+'([^']+)'", text).group(1)
 
           print(f"Pinging {url} …")
-          # Hit the PostgREST root (returns the API schema).
-          # Supabase gateway v2 requires both apikey AND Authorization headers
-          # even for anon requests — omitting either returns UNAUTHORIZED_INVALID_API_KEY_TYPE.
+          # Query the attempts table with the anon key.
+          # RLS ensures 0 rows are returned (auth.uid() is NULL for anon
+          # requests and never matches any user_id), but the query still
+          # reaches the database — which is what prevents the free-plan pause.
+          # Requires: grant select on attempts to anon  (migration 20260627000000)
           req = urllib.request.Request(
-              f"{url}/rest/v1/",
+              f"{url}/rest/v1/attempts?select=count",
               headers={
                   "apikey": key,
                   "Authorization": f"Bearer {key}",
