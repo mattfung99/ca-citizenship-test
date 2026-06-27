@@ -25,37 +25,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Read credentials from src/config.js
-        id: cfg
+      - name: Ping database
         run: |
           python3 - <<'EOF'
-          import re, os
+          import re, sys, urllib.request, urllib.error
+
           text = open("src/config.js").read()
-          url = re.search(r"SUPABASE_URL\s+=\s+'([^']+)'", text).group(1)
-          key = re.search(r"SUPABASE_ANON_KEY\s+=\s+'([^']+)'", text).group(1)
-          out = os.environ["GITHUB_OUTPUT"]
-          with open(out, "a") as f:
-              f.write(f"url={url}\n")
-              f.write(f"key={key}\n")
-          print(f"Project URL: {url}")
+          url  = re.search(r"SUPABASE_URL\s+=\s+'([^']+)'", text).group(1)
+          key  = re.search(r"SUPABASE_ANON_KEY\s+=\s+'([^']+)'", text).group(1)
+
+          print(f"Pinging {url} …")
+          req = urllib.request.Request(
+              f"{url}/rest/v1/attempts?select=count&limit=0",
+              headers={
+                  "apikey": key,
+                  "Authorization": f"Bearer {key}",
+                  "Accept": "application/json",
+              },
+          )
+          try:
+              with urllib.request.urlopen(req) as resp:
+                  print(f"Database is active (HTTP {resp.status}).")
+          except urllib.error.HTTPError as exc:
+              print(f"::warning::HTTP {exc.code} — the project may already be paused.")
+              print("Visit https://supabase.com/dashboard to check the project status.")
+              sys.exit(1)
           EOF
-
-      - name: Query attempts table
-        id: ping
-        run: |
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "apikey: ${{ steps.cfg.outputs.key }}" \
-            -H "Authorization: Bearer ${{ steps.cfg.outputs.key }}" \
-            -H "Accept: application/json" \
-            "${{ steps.cfg.outputs.url }}/rest/v1/attempts?select=count&limit=0")
-
-          echo "status=$HTTP" >> "$GITHUB_OUTPUT"
-          echo "HTTP status: $HTTP"
-
-          if [ "$HTTP" -ge 200 ] && [ "$HTTP" -lt 300 ]; then
-            echo "Database is active."
-          else
-            echo "::warning::Unexpected HTTP $HTTP — the project may already be paused."
-            echo "Visit https://supabase.com/dashboard to check the project status."
-            exit 1
-          fi
