@@ -1,7 +1,8 @@
 {
   "sources": [
     "https://www.yourlibrary.ca/citizenship-test-answer-keys/",
-    "https://www.mycitizen.ca/full-simulation-tests.html"
+    "https://www.mycitizen.ca/full-simulation-tests.html",
+    "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/"
   ],
   "note": "Based on the Discover Canada study guide. Provincial questions are region-specific (often Richmond, BC) and some answers reflect officials at the time of authoring. Each question carries a 'source' URL.",
   "federal": [
@@ -5555,6 +5556,1215 @@
       "source": "https://www.mycitizen.ca/canadian-citizenship-practice-test-18.html",
       "id": 427,
       "category": "Federal Questions"
+    },
+    {
+      "id": 508,
+      "question": "Who was the first European to draw a map of Canada's East Coast, setting foot on Newfoundland or Cape Breton Island in 1497?",
+      "options": [
+        "John Cabot",
+        "Jacques Cartier",
+        "Samuel de Champlain",
+        "Pierre de Monts"
+      ],
+      "correct": 0,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 509,
+      "question": "Vikings from Iceland who colonized Greenland about 1,000 years ago also reached Labrador and Newfoundland. What is the name of their settlement, now a World Heritage site?",
+      "options": [
+        "Port-Royal",
+        "Fort Garry",
+        "l'Anse aux Meadows",
+        "Louisbourg"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 510,
+      "question": "What was the significance of the Quebec Act of 1774?",
+      "options": [
+        "It created the first elected assembly in Canada",
+        "It allowed religious freedom for Catholics, permitted them to hold public office, and restored French civil law",
+        "It merged Upper and Lower Canada into one province",
+        "It granted women the right to vote"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 511,
+      "question": "The Constitutional Act of 1791 divided the Province of Quebec into Upper Canada and Lower Canada. What were these regions later renamed?",
+      "options": [
+        "Nova Scotia and New Brunswick",
+        "Manitoba and Saskatchewan",
+        "Ontario and Quebec",
+        "British Columbia and Alberta"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 512,
+      "question": "In what year did Upper and Lower Canada unite as the Province of Canada?",
+      "options": [
+        "1830",
+        "1840",
+        "1848",
+        "1867"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 513,
+      "question": "Which was the first British North American colony to attain full responsible government, in 1847-48?",
+      "options": [
+        "Quebec",
+        "Ontario",
+        "New Brunswick",
+        "Nova Scotia"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 514,
+      "question": "When did British Columbia join Confederation?",
+      "options": [
+        "1867",
+        "1869",
+        "1871",
+        "1873"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 515,
+      "question": "When did Prince Edward Island join Confederation?",
+      "options": [
+        "1867",
+        "1870",
+        "1871",
+        "1873"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 516,
+      "question": "When did Newfoundland and Labrador join Confederation?",
+      "options": [
+        "1939",
+        "1945",
+        "1949",
+        "1952"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 517,
+      "question": "In what year did Alberta and Saskatchewan become provinces of Canada?",
+      "options": [
+        "1895",
+        "1898",
+        "1905",
+        "1910"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 518,
+      "question": "What battle in 1813 saw Lieutenant-Colonel Charles de Salaberry and about 460 soldiers, mostly French Canadiens, turn back approximately 4,000 American invaders south of Montreal?",
+      "options": [
+        "Battle of Queenston Heights",
+        "Battle of Beaver Dams",
+        "Battle of Chateauguay",
+        "Battle of York"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 519,
+      "question": "In 1813, Laura Secord made a dangerous 19-mile journey on foot to warn a British officer of a planned American attack during the War of 1812. Who did she warn?",
+      "options": [
+        "Major-General Sir Isaac Brock",
+        "Lieutenant James FitzGibbon",
+        "Major-General Robert Ross",
+        "Lieutenant-Colonel Charles de Salaberry"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 520,
+      "question": "When World War I broke out in 1914, what military force did Ottawa form to fight overseas?",
+      "options": [
+        "The Royal Canadian Corps",
+        "The British Empire Forces",
+        "The Canadian Expeditionary Force",
+        "The North West Mounted Police"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 521,
+      "question": "Who was Canada's greatest soldier and led the Canadian Corps in the final hundred days of World War I?",
+      "options": [
+        "Major-General Sir Isaac Brock",
+        "General Sir Arthur Currie",
+        "Major-General Robert Ross",
+        "Major-General Sir Sam Steele"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 522,
+      "question": "What did the Germans call the victorious Battle of Amiens on August 8, 1918?",
+      "options": [
+        "The turning of the tide",
+        "The Canadian breakthrough",
+        "The black day of the German Army",
+        "The final stand of France"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 523,
+      "question": "Which province was the first to grant voting rights to women, in 1916?",
+      "options": [
+        "Ontario",
+        "British Columbia",
+        "Nova Scotia",
+        "Manitoba"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 524,
+      "question": "Who was the first woman elected as a Member of Parliament in Canada, in 1921?",
+      "options": [
+        "Emily Stowe",
+        "Therese Casgrain",
+        "Agnes Macphail",
+        "Mary Ann Shadd Cary"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 525,
+      "question": "In what year did Quebec become the last province to grant women the right to vote provincially?",
+      "options": [
+        "1917",
+        "1918",
+        "1932",
+        "1940"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 526,
+      "question": "Who composed the poem \"In Flanders Fields\" in 1915, often recited on Remembrance Day?",
+      "options": [
+        "Robert W. Service",
+        "Lucy Maud Montgomery",
+        "Lieutenant-Colonel John McCrae",
+        "Stephen Leacock"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 527,
+      "question": "What did the stock market crash of 1929 lead to in Canada?",
+      "options": [
+        "The Quiet Revolution",
+        "The Great Depression, with unemployment reaching 27% in 1933",
+        "The creation of NAFTA",
+        "The establishment of the Bank of Canada in 1927"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 528,
+      "question": "On D-Day, June 6, 1944, which beach did Canadian troops storm and capture during the Allied invasion of Normandy?",
+      "options": [
+        "Omaha Beach",
+        "Utah Beach",
+        "Gold Beach",
+        "Juno Beach"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 529,
+      "question": "What was the Royal Canadian Navy's primary role in the Second World War?",
+      "options": [
+        "Leading the Allied invasion of Italy",
+        "Protecting convoys of merchant ships against German submarines in the Battle of the Atlantic",
+        "Providing air support in the Battle of Britain",
+        "Transporting Canadian troops to the Pacific theatre"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 530,
+      "question": "What ranking did the Royal Canadian Navy hold in the world at the end of the Second World War?",
+      "options": [
+        "Largest navy in the world",
+        "Second-largest navy in the world",
+        "Third-largest navy in the world",
+        "Fifth-largest navy in the world"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 531,
+      "question": "In what year did the Government of Canada apologize for the wartime relocation of Canadians of Japanese origin?",
+      "options": [
+        "1968",
+        "1976",
+        "1988",
+        "2006"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 532,
+      "question": "In what year did Canada apologize for the discriminatory Head Tax charged to Chinese workers who helped build the Canadian Pacific Railway?",
+      "options": [
+        "1988",
+        "1995",
+        "2000",
+        "2006"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 533,
+      "question": "In what year was oil discovered in Alberta, beginning Canada's modern energy industry?",
+      "options": [
+        "1935",
+        "1947",
+        "1956",
+        "1962"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 534,
+      "question": "What military alliance did Canada join with other Western democracies during the Cold War?",
+      "options": [
+        "The League of Nations",
+        "The G8",
+        "The North Atlantic Treaty Organization (NATO)",
+        "The British Commonwealth of Nations"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 535,
+      "question": "What defence command did Canada form jointly with the United States during the Cold War?",
+      "options": [
+        "The North American Aerospace Defence Command (NORAD)",
+        "The Joint Defence Alliance (JDA)",
+        "The Canada-US Border Defence Command",
+        "The Pacific Alliance Treaty"
+      ],
+      "correct": 0,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 536,
+      "question": "How many Canadians were killed or wounded in the Korean War (1950-53)?",
+      "options": [
+        "500 dead and 1,000 wounded",
+        "1,500 dead and 3,000 wounded",
+        "5,000 dead and 10,000 wounded",
+        "200 dead and 500 wounded"
+      ],
+      "correct": 0,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 537,
+      "question": "In what year did Canada help found La Francophonie, an international association of French-speaking countries?",
+      "options": [
+        "1965",
+        "1967",
+        "1970",
+        "1982"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 538,
+      "question": "In 1956, Canada welcomed about 37,000 refugees escaping Soviet tyranny from which country?",
+      "options": [
+        "Poland",
+        "Czechoslovakia",
+        "Hungary",
+        "Romania"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 539,
+      "question": "When were Aboriginal people granted the right to vote in Canada?",
+      "options": [
+        "1945",
+        "1948",
+        "1960",
+        "1970"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 540,
+      "question": "Who invented the BlackBerry wireless communications device through their company Research In Motion (RIM)?",
+      "options": [
+        "Marshall McLuhan and Harold Innis",
+        "Mike Lazaridis and Jim Balsillie",
+        "Sir Sandford Fleming and Reginald Fessenden",
+        "Joseph-Armand Bombardier and Dr. John A. Hopps"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 541,
+      "question": "Which Canadian inventor hit on the idea of the telephone at his summer house in Canada?",
+      "options": [
+        "Reginald Fessenden",
+        "Alexander Graham Bell",
+        "Dr. Wilder Penfield",
+        "Sir Sandford Fleming"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 542,
+      "question": "Which pioneering brain surgeon at McGill University in Montreal was known as \"the greatest living Canadian\"?",
+      "options": [
+        "Dr. Frederick Banting",
+        "Dr. John A. Hopps",
+        "Dr. Wilder Penfield",
+        "Dr. Charles Best"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 543,
+      "question": "What is Canada's national winter sport?",
+      "options": [
+        "Curling",
+        "Ice hockey",
+        "Skiing",
+        "Snowboarding"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 544,
+      "question": "What is Canada's official summer sport?",
+      "options": [
+        "Soccer",
+        "Baseball",
+        "Lacrosse",
+        "Basketball"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 545,
+      "question": "What is the Stanley Cup, and who donated it?",
+      "options": [
+        "The championship trophy of the Canadian Football League, donated by Lord Grey in 1909",
+        "The championship trophy of the National Hockey League, donated by Lord Stanley, the Governor General, in 1892",
+        "A women's hockey trophy, donated by Governor General Adrienne Clarkson in 2005",
+        "An award given to the best Canadian athlete, donated by the Prime Minister"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 546,
+      "question": "What is the Grey Cup, and who donated it?",
+      "options": [
+        "The National Hockey League championship trophy, donated by Lord Grey",
+        "An award for outstanding citizenship, donated by Lord Grey",
+        "The Canadian Football League championship trophy, donated by Lord Grey, the Governor General, in 1909",
+        "A trophy awarded to the best curling team in Canada"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 547,
+      "question": "What is the Clarkson Cup?",
+      "options": [
+        "An award given to outstanding immigrant Canadians, established in 2005",
+        "A trophy awarded to the winner of the Canadian curling championships",
+        "A women's hockey trophy established in 2005 by Governor General Adrienne Clarkson",
+        "An award for excellence in Canadian art and culture"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 548,
+      "question": "What does the Canadian national motto \"A Mari Usque Ad Mare\" mean in English?",
+      "options": [
+        "Strong and free",
+        "From sea to sea",
+        "Unity in diversity",
+        "True north strong and free"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 549,
+      "question": "On which Canadian coin can the beaver be found?",
+      "options": [
+        "The one-cent coin",
+        "The five-cent coin",
+        "The ten-cent coin",
+        "The twenty-five-cent coin"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 550,
+      "question": "When was the current Canadian flag raised for the first time, and what does its red-white-red pattern originate from?",
+      "options": [
+        "1921, from the colours of France and England since the Middle Ages",
+        "1965, from the flag of the Royal Military College, Kingston, founded in 1876",
+        "1867, from the British Union Jack combined with maple leaves",
+        "1948, from the flag adopted by Quebec"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 551,
+      "question": "What flag served as Canada's national flag for about 100 years before the current maple leaf flag was adopted in 1965?",
+      "options": [
+        "The Union Jack",
+        "The Quebec Flag",
+        "The Canadian Red Ensign",
+        "The Royal Standard"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 552,
+      "question": "In what year was \"O Canada\" proclaimed as the National Anthem, and where was it first sung?",
+      "options": [
+        "1965, Ottawa",
+        "1967, Toronto",
+        "1980, Ottawa",
+        "1980, Quebec City (first sung there in 1880)"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 553,
+      "question": "When was the Peace Tower on the Parliament Buildings completed, and what does it commemorate?",
+      "options": [
+        "Completed in 1867 to mark Confederation",
+        "Completed in 1916 after the Centre Block fire",
+        "Completed in 1927 in memory of the First World War",
+        "Completed in 1945 in memory of the Second World War"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 554,
+      "question": "What is contained in the Memorial Chamber within the Peace Tower on Parliament Hill?",
+      "options": [
+        "Original copies of the British North America Act and the Constitution Act",
+        "Books of Remembrance listing names of soldiers, sailors and airmen who died serving Canada",
+        "The original Dominion of Canada charter signed by the Fathers of Confederation",
+        "Portraits of all Prime Ministers of Canada"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 555,
+      "question": "What happened to the Centre Block of the Parliament Buildings in 1916?",
+      "options": [
+        "It was attacked by American forces during the War of 1812",
+        "It was destroyed by an accidental fire and rebuilt in 1922",
+        "It was demolished to make way for the current Confederation Square",
+        "It was damaged during a protest and required major renovations"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 556,
+      "question": "What is the highest honour available to Canadians, awarded for the most conspicuous bravery in the presence of the enemy?",
+      "options": [
+        "The Order of Canada",
+        "The Meritorious Service Cross",
+        "The Victoria Cross",
+        "The Medal of Bravery"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 557,
+      "question": "What date is Canada Day, and what does it commemorate?",
+      "options": [
+        "May 25, commemorating Queen Victoria's birthday",
+        "July 1, commemorating the birth of Canada as a self-governing Dominion in 1867",
+        "November 11, commemorating the end of the First World War",
+        "First Monday in September, to celebrate workers"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 558,
+      "question": "What is Victoria Day in Canada, and when is it observed?",
+      "options": [
+        "A holiday on July 1 commemorating Queen Victoria's founding of Canada",
+        "A holiday on the Monday preceding May 25, celebrating the Sovereign's birthday",
+        "A holiday marking the day Queen Victoria signed the British North America Act",
+        "A holiday on November 11 to honour war veterans"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 559,
+      "question": "What percentage of working Canadians are employed in service industries?",
+      "options": [
+        "More than 50%",
+        "More than 60%",
+        "More than 75%",
+        "More than 90%"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-economy.html"
+    },
+    {
+      "id": 560,
+      "question": "Canada enacted free trade with the United States in 1988. What broader agreement in 1994 also included Mexico?",
+      "options": [
+        "General Agreement on Tariffs and Trade (GATT)",
+        "World Trade Organization (WTO) Treaty",
+        "North American Free Trade Agreement (NAFTA)",
+        "Trans-Pacific Partnership (TPP)"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-economy.html"
+    },
+    {
+      "id": 561,
+      "question": "Which court in Canada deals specifically with matters concerning the federal government?",
+      "options": [
+        "The Queen's Bench Court",
+        "The Federal Court of Canada",
+        "The Provincial Superior Court",
+        "The Court of Appeal"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/justice-system.html"
+    },
+    {
+      "id": 562,
+      "question": "In which two provinces does the Royal Canadian Mounted Police (RCMP) NOT serve as the provincial police force?",
+      "options": [
+        "Alberta and British Columbia",
+        "Ontario and Quebec",
+        "Manitoba and Saskatchewan",
+        "Nova Scotia and New Brunswick"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/justice-system.html"
+    },
+    {
+      "id": 563,
+      "question": "Where is the training academy of the Royal Canadian Mounted Police (RCMP) located?",
+      "options": [
+        "Ottawa, Ontario",
+        "Winnipeg, Manitoba",
+        "Regina, Saskatchewan",
+        "Calgary, Alberta"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 564,
+      "question": "What is the Confederation Bridge, and where is it located?",
+      "options": [
+        "A historic railway bridge crossing the St. Lawrence River in Quebec",
+        "One of the longest continuous multispan bridges in the world, connecting Prince Edward Island to mainland Canada",
+        "The bridge crossing Niagara Falls connecting Canada and the United States",
+        "A bridge built in 1867 to celebrate Confederation"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 565,
+      "question": "Prince Edward Island is known as the birthplace of Confederation. What famous novel set in PEI was written by Lucy Maud Montgomery?",
+      "options": [
+        "The Stone Angel",
+        "The Tin Flute",
+        "Anne of Green Gables",
+        "Beautiful Losers"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 566,
+      "question": "Nova Scotia is known for having the world's highest tides. In which body of water are these found?",
+      "options": [
+        "The Gulf of St. Lawrence",
+        "Hudson Bay",
+        "The Bay of Fundy",
+        "The Strait of Georgia"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 567,
+      "question": "Which is the only officially bilingual province in Canada?",
+      "options": [
+        "Quebec",
+        "Ontario",
+        "Manitoba",
+        "New Brunswick"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 568,
+      "question": "What is the most famous street intersection in Canada, located in Winnipeg's Exchange District?",
+      "options": [
+        "Bay and King in Toronto",
+        "Granville and Georgia in Vancouver",
+        "Portage and Main in Winnipeg",
+        "Rideau and Sussex in Ottawa"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 569,
+      "question": "Alberta and the world-famous Lake Louise in the Rocky Mountains were both named after which person?",
+      "options": [
+        "Queen Victoria herself",
+        "Princess Louise Caroline Alberta, fourth daughter of Queen Victoria",
+        "Lady Alberta, wife of the first Governor General",
+        "Princess Alberta of Prussia, who married into the British Royal Family"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 570,
+      "question": "What is the highest mountain in Canada, and in which territory is it located?",
+      "options": [
+        "Mount Robson, in British Columbia",
+        "Mount Columbia, in Alberta",
+        "Mount Logan, in Yukon",
+        "Baffin Peak, in Nunavut"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 571,
+      "question": "Why is Canada's North sometimes referred to as the \"Land of the Midnight Sun\"?",
+      "options": [
+        "Because the Northern Lights (Aurora Borealis) illuminate the sky at night",
+        "Because at the height of summer, daylight can last up to 24 hours",
+        "Because the sun never sets below the horizon in winter",
+        "Because the sun reflects off Arctic ice and appears to shine at midnight"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 572,
+      "question": "What does \"Nunavut\" mean in Inuktitut, and in what year was it established as a territory?",
+      "options": [
+        "\"Our land,\" established in 1999",
+        "\"The North,\" established in 1993",
+        "\"Land of Ice,\" established in 1985",
+        "\"Great plains,\" established in 1982"
+      ],
+      "correct": 0,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 573,
+      "question": "The Mackenzie River is the second-longest river system in North America. What is the longest?",
+      "options": [
+        "The St. Lawrence River",
+        "The Mississippi River",
+        "The Colorado River",
+        "The Yukon River"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 574,
+      "question": "Which of the Great Lakes is the largest freshwater lake in the world?",
+      "options": [
+        "Lake Ontario",
+        "Lake Erie",
+        "Lake Huron",
+        "Lake Superior"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 575,
+      "question": "What is Canada's second largest city and the second largest mainly French-speaking city in the world after Paris?",
+      "options": [
+        "Quebec City",
+        "Ottawa",
+        "Montreal",
+        "Gatineau"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 576,
+      "question": "What is Saskatchewan sometimes called, reflecting its historic role as a major grain-producing region?",
+      "options": [
+        "The Golden Province",
+        "The Wheat Province",
+        "The Prairie Heart",
+        "The Grain Belt"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 577,
+      "question": "Which city in the Northwest Territories is known as the \"diamond capital of North America\"?",
+      "options": [
+        "Inuvik",
+        "Fort Smith",
+        "Yellowknife",
+        "Hay River"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 578,
+      "question": "What are the three main objectives of the Official Languages Act passed by Parliament in 1969?",
+      "options": [
+        "Promote immigration, support bilingual education, and fund French radio stations",
+        "Establish equality between French and English in the federal government; maintain official language minority communities; and promote equality of French and English in Canadian society",
+        "Require all Canadians to learn both languages, replace English-only signs, and fund French schools",
+        "Make French the primary language in Quebec, support bilingual immigration, and fund translation services"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 579,
+      "question": "In what year did Canada adopt the Order of Canada, its own national honours system?",
+      "options": [
+        "1952",
+        "1965",
+        "1967",
+        "1982"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 580,
+      "question": "What is Vimy Day and when is it observed in Canada?",
+      "options": [
+        "A day honouring veterans of the Second World War, observed on November 11",
+        "A day remembering the Battle of the Plains of Abraham, observed on September 13",
+        "A day commemorating the Canadian Corps' victory at Vimy Ridge in 1917, observed on April 9",
+        "A day celebrating Canada's military history, observed on the first Monday of June"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 581,
+      "question": "What does the preamble to the Canadian Charter of Rights and Freedoms state Canada is founded upon?",
+      "options": [
+        "The principles that recognize the rule of law and parliamentary supremacy",
+        "The principles that recognize the supremacy of God and the rule of law",
+        "The principles that recognize democracy and equality of all citizens",
+        "The principles that recognize the heritage of the Crown and freedom of the individual"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/rights-resonsibilities-citizenship.html"
+    },
+    {
+      "id": 582,
+      "question": "What are mobility rights under the Canadian Charter of Rights and Freedoms?",
+      "options": [
+        "The right to use public transportation anywhere in Canada",
+        "The right to live and work anywhere in Canada, to enter and leave the country freely, and to apply for a passport",
+        "The right of immigrants to move freely across provinces after arrival",
+        "The right to drive and obtain a driver's licence in any province"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/rights-resonsibilities-citizenship.html"
+    },
+    {
+      "id": 583,
+      "question": "Which citizenship responsibility requires Canadians to participate in the legal system when called upon?",
+      "options": [
+        "Voting in elections",
+        "Obeying the law",
+        "Serving on a jury",
+        "Helping others in the community"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/rights-resonsibilities-citizenship.html"
+    },
+    {
+      "id": 584,
+      "question": "Does Canada have compulsory military service?",
+      "options": [
+        "Yes, all citizens between 18 and 35 must serve at least one year",
+        "Yes, but only citizens born in Canada are required to serve",
+        "No, but citizens can volunteer to serve in the Canadian Armed Forces, Coast Guard, or local emergency services",
+        "No military service opportunities are available to civilians in Canada"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/rights-resonsibilities-citizenship.html"
+    },
+    {
+      "id": 585,
+      "question": "Since 1989, Canadian astronauts have participated in space exploration using a Canadian-designed robotic arm. What is this arm called?",
+      "options": [
+        "The CanadaArm",
+        "The RoboticArm",
+        "The Canadarm",
+        "The SPAR Arm"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 586,
+      "question": "What is the Group of Seven, founded in 1920?",
+      "options": [
+        "A group of seven Fathers of Confederation who designed the Canadian flag",
+        "A group of Canadian painters who developed a style capturing rugged wilderness landscapes",
+        "Seven Nobel Prize-winning Canadian scientists honoured by the government",
+        "A group of seven Canadian authors who pioneered modern Canadian literature"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 587,
+      "question": "In 1972, Paul Henderson scored a famous goal. What was it commonly called, and why is it significant?",
+      "options": [
+        "The Canada Cup goal — it won Canada the first international hockey tournament",
+        "The winning goal in the Canada-Soviet Summit Series, often called \"the goal heard around the world\"",
+        "The Olympic gold medal-winning goal at the 1972 Munich Olympics",
+        "The first-ever goal scored in the National Hockey League"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 588,
+      "question": "What was the first representative assembly elected in British North America, and where was it held?",
+      "options": [
+        "The Parliament of Canada, 1867, in Ottawa",
+        "The elected assembly of Halifax, Nova Scotia, in 1758",
+        "The Quebec National Assembly, 1774",
+        "The Upper Canada Assembly, 1791, in York (Toronto)"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 589,
+      "question": "What event on November 7, 1885 was a powerful symbol of national unity for Canada?",
+      "options": [
+        "The completion of the transcontinental Canadian Pacific Railway, with the last spike driven by Donald Smith",
+        "The passage of the British North America Act in the British Parliament",
+        "The signing of the Treaty of Paris ending the War of 1812",
+        "The election of Sir John A. Macdonald as Canada's first Prime Minister"
+      ],
+      "correct": 0,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 590,
+      "question": "Queen Victoria chose Ottawa as Canada's capital in 1857. On which river is Ottawa located?",
+      "options": [
+        "The St. Lawrence River",
+        "The Ottawa River",
+        "The Rideau River",
+        "The Gatineau River"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 591,
+      "question": "What is the Fete Nationale (Quebec's national holiday), and when is it celebrated?",
+      "options": [
+        "Quebec Independence Day, celebrated on July 1",
+        "The Feast of St. John the Baptist, celebrated on June 24",
+        "The anniversary of the Quebec Act of 1774, celebrated on June 15",
+        "Quebec's Day of Bilingualism, celebrated on the third Monday of May"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 592,
+      "question": "The Yukon holds the record for the coldest temperature ever recorded in Canada. What was that temperature?",
+      "options": [
+        "-45°C",
+        "-53°C",
+        "-63°C",
+        "-71°C"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 593,
+      "question": "What is the role of the Canadian Rangers?",
+      "options": [
+        "They are an elite commando force based in Ottawa protecting federal buildings",
+        "They enforce federal laws in urban areas across Canada",
+        "They are part of the Canadian Forces Reserves, using indigenous knowledge to provide security and sovereignty in Canada's vast North",
+        "They patrol the Canada-US border and enforce immigration laws"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-regions.html"
+    },
+    {
+      "id": 594,
+      "question": "What was the Quiet Revolution in Quebec during the 1960s?",
+      "options": [
+        "A peaceful protest movement demanding Quebec's separation from Canada",
+        "A period of rapid social and political change in Quebec during which many Quebecers sought to separate from Canada",
+        "A diplomatic effort by Quebec to gain more powers from the federal government",
+        "A cultural movement promoting French language arts in Quebec"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/modern-canada.html"
+    },
+    {
+      "id": 595,
+      "question": "Where did Pierre de Monts and Samuel de Champlain establish the first European settlement north of Florida, in 1604?",
+      "options": [
+        "At Quebec City on the St. Lawrence River",
+        "First on St. Croix Island (present-day Maine), then at Port-Royal in Acadia (present-day Nova Scotia)",
+        "At Montreal, then at Halifax",
+        "At l'Anse aux Meadows in Newfoundland"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 596,
+      "question": "In 1670, King Charles II of England granted exclusive trading rights over a vast territory to which company?",
+      "options": [
+        "The North West Company",
+        "The East India Company",
+        "The Hudson's Bay Company",
+        "The Montreal Trading Company"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 597,
+      "question": "How many Canadian and Newfoundland servicemen and women served in the Second World War, out of a total population of 11.5 million?",
+      "options": [
+        "More than 100,000",
+        "More than 500,000",
+        "More than one million",
+        "More than two million"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-history.html"
+    },
+    {
+      "id": 598,
+      "question": "What is the fleur-de-lys, and why is it significant to Canada?",
+      "options": [
+        "A maple leaf symbol adopted by English Canada in the 1700s",
+        "A lily flower symbol adopted by French royalty for over a thousand years; it became the symbol of New France and later appeared on the Quebec flag",
+        "A flower symbol representing the unity of French and English Canadians",
+        "A symbol of the Metis nation, representing their mixed heritage"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 599,
+      "question": "Canada's national colours were assigned by King George V in 1921. What are they?",
+      "options": [
+        "Blue and gold",
+        "Red and white",
+        "Red and blue",
+        "Green and white"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadian-symbols.html"
+    },
+    {
+      "id": 600,
+      "question": "Over three-quarters of Canadian exports go to which country?",
+      "options": [
+        "The United Kingdom",
+        "China",
+        "Germany",
+        "The United States"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-economy.html"
     }
   ],
   "provincial": [
