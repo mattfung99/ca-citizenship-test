@@ -2,7 +2,8 @@
   "sources": [
     "https://www.yourlibrary.ca/citizenship-test-answer-keys/",
     "https://www.mycitizen.ca/full-simulation-tests.html",
-    "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/"
+    "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/",
+    "https://www.cicnews.com/2025/06/can-you-pass-the-canadian-citizenship-test-try-our-practice-test-0655913.html"
   ],
   "note": "Based on the Discover Canada study guide. Provincial questions are region-specific (often Richmond, BC) and some answers reflect officials at the time of authoring. Each question carries a 'source' URL.",
   "federal": [
@@ -6765,6 +6766,78 @@
       "correct": 3,
       "category": "Federal Questions",
       "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/discover-canada/read-online/canadas-economy.html"
+    },
+    {
+      "id": 601,
+      "question": "Which of the following has been a symbol of the state in Canada for the last 400 years?",
+      "options": [
+        "The beaver",
+        "The Great Seal of Canada",
+        "The Crown",
+        "The Cross of St. George"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.cicnews.com/2025/06/can-you-pass-the-canadian-citizenship-test-try-our-practice-test-0655913.html"
+    },
+    {
+      "id": 602,
+      "question": "When did Canada become a self-governing nation?",
+      "options": [
+        "May 9, 1840",
+        "December 11, 1931",
+        "April 18, 1919",
+        "July 1, 1867"
+      ],
+      "correct": 3,
+      "category": "Federal Questions",
+      "source": "https://www.cicnews.com/2025/06/can-you-pass-the-canadian-citizenship-test-try-our-practice-test-0655913.html"
+    },
+    {
+      "id": 603,
+      "question": "True or false: In Canada, judges are elected by the public.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.cicnews.com/2025/06/can-you-pass-the-canadian-citizenship-test-try-our-practice-test-0655913.html"
+    },
+    {
+      "id": 604,
+      "question": "True or false: Nunavut holds the record for the coldest temperature ever recorded in Canada.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct": 1,
+      "category": "Federal Questions",
+      "source": "https://www.cicnews.com/2025/06/can-you-pass-the-canadian-citizenship-test-try-our-practice-test-0655913.html"
+    },
+    {
+      "id": 605,
+      "question": "The Supreme Court of Canada consists of how many judges?",
+      "options": [
+        "7",
+        "8",
+        "9",
+        "11"
+      ],
+      "correct": 2,
+      "category": "Federal Questions",
+      "source": "https://www.cicnews.com/2025/06/can-you-pass-the-canadian-citizenship-test-try-our-practice-test-0655913.html"
+    },
+    {
+      "id": 606,
+      "question": "True or false: All members of the House of Commons have the right to question any decisions made by the Cabinet.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct": 0,
+      "category": "Federal Questions",
+      "source": "https://www.cicnews.com/2025/06/can-you-pass-the-canadian-citizenship-test-try-our-practice-test-0655913.html"
     }
   ],
   "provincial": [
