@@ -35,13 +35,14 @@ jobs:
           key  = re.search(r"SUPABASE_ANON_KEY\s+=\s+'([^']+)'", text).group(1)
 
           print(f"Pinging {url} …")
-          # Hit the PostgREST root — returns the API schema.
-          # This works with the anon role (no table-level grant needed) and
-          # counts as project activity for Supabase's inactivity-pause check.
+          # Hit the PostgREST root (returns the API schema).
+          # Supabase gateway v2 requires both apikey AND Authorization headers
+          # even for anon requests — omitting either returns UNAUTHORIZED_INVALID_API_KEY_TYPE.
           req = urllib.request.Request(
               f"{url}/rest/v1/",
               headers={
                   "apikey": key,
+                  "Authorization": f"Bearer {key}",
                   "Accept": "application/json",
               },
           )
