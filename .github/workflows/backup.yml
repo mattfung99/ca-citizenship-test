@@ -1,4 +1,4 @@
-name: Supabase Backup
+name: supabase-backup
 
 # Runs every Sunday at 02:00 UTC and can be triggered manually.
 # Exports all users and attempts to a GitHub Actions artifact (retained 90 days).

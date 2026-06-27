@@ -1,4 +1,4 @@
-name: Keep Supabase Alive
+name: keep-supabase-alive
 
 # Supabase free-plan projects pause after 7 days of inactivity.
 # This workflow fires a real database query every 5 days to prevent that.
