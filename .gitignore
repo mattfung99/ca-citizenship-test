@@ -1,1 +1,7 @@
 .mcp.json
+
+# Supabase migration — contain service_role keys; never commit
+scripts/migrate.env
+
+# Local backup files — exported via `make export` or the backup workflow
+backups/

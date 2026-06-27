@@ -1,0 +1,43 @@
+name: Supabase Backup
+
+# Runs every Sunday at 02:00 UTC and can be triggered manually.
+# Exports all users and attempts to a GitHub Actions artifact (retained 90 days).
+#
+# Setup:
+#   1. Go to your repo → Settings → Secrets and variables → Actions
+#   2. Add two repository secrets:
+#        SUPABASE_URL           — https://<ref>.supabase.co
+#        SUPABASE_SERVICE_ROLE  — the service_role secret key
+#   3. The workflow will run automatically each Sunday.
+#
+# To download a backup:
+#   GitHub repo → Actions → Supabase Backup → pick a run → Artifacts → download "supabase-backup"
+
+on:
+  schedule:
+    - cron: "0 2 * * 0"   # every Sunday at 02:00 UTC
+  workflow_dispatch:        # manual trigger from the Actions tab
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Export data from Supabase
+        env:
+          OLD_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          OLD_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+        run: |
+          mkdir -p backups
+          python3 scripts/migrate.py export --out backups/backup_latest.json
+          echo "Backup size: $(du -sh backups/backup_latest.json | cut -f1)"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: supabase-backup-${{ github.run_id }}
+          path: backups/backup_latest.json
+          # Retain for 90 days (GitHub free plan maximum for public repos).
+          retention-days: 90

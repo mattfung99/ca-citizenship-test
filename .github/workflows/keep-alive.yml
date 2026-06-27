@@ -1,0 +1,61 @@
+name: Keep Supabase Alive
+
+# Supabase free-plan projects pause after 7 days of inactivity.
+# This workflow fires a real database query every 5 days to prevent that.
+#
+# No secrets required — the anon key lives in src/config.js (intentionally
+# public; security is enforced by Row Level Security on the database).
+#
+# To trigger manually: Actions tab → "Keep Supabase Alive" → Run workflow.
+
+on:
+  schedule:
+    #        ┌─ minute  ┌─ hour  ┌─ day-of-month  ┌─ month  ┌─ day-of-week
+    #        │          │        │                 │         │
+    - cron: "0          12       1,6,11,16,21,26   *         *"
+    # Runs on the 1st, 6th, 11th, 16th, 21st, 26th of every month at noon UTC.
+    # Worst-case gap is 5 days — well within the 7-day inactivity window.
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping database
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read credentials from src/config.js
+        id: cfg
+        run: |
+          python3 - <<'EOF'
+          import re, os
+          text = open("src/config.js").read()
+          url = re.search(r"SUPABASE_URL\s+=\s+'([^']+)'", text).group(1)
+          key = re.search(r"SUPABASE_ANON_KEY\s+=\s+'([^']+)'", text).group(1)
+          out = os.environ["GITHUB_OUTPUT"]
+          with open(out, "a") as f:
+              f.write(f"url={url}\n")
+              f.write(f"key={key}\n")
+          print(f"Project URL: {url}")
+          EOF
+
+      - name: Query attempts table
+        id: ping
+        run: |
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: ${{ steps.cfg.outputs.key }}" \
+            -H "Authorization: Bearer ${{ steps.cfg.outputs.key }}" \
+            -H "Accept: application/json" \
+            "${{ steps.cfg.outputs.url }}/rest/v1/attempts?select=count&limit=0")
+
+          echo "status=$HTTP" >> "$GITHUB_OUTPUT"
+          echo "HTTP status: $HTTP"
+
+          if [ "$HTTP" -ge 200 ] && [ "$HTTP" -lt 300 ]; then
+            echo "Database is active."
+          else
+            echo "::warning::Unexpected HTTP $HTTP — the project may already be paused."
+            echo "Visit https://supabase.com/dashboard to check the project status."
+            exit 1
+          fi
