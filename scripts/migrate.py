@@ -170,7 +170,7 @@ def cmd_export(args: argparse.Namespace) -> None:
 
     # 3. Write backup.
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out_path = Path(args.out) if args.out else REPO_ROOT / "backups" / f"backup_{timestamp}.json"
+    out_path = Path(args.out).resolve() if args.out else REPO_ROOT / "backups" / f"backup_{timestamp}.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     payload = {
