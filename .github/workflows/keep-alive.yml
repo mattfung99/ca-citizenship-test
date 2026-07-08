@@ -1,20 +1,25 @@
 name: keep-supabase-alive
 
 # Supabase free-plan projects pause after 7 days of inactivity.
-# This workflow fires a real database query every 5 days to prevent that.
+# This workflow performs a real database WRITE every day to prevent that.
 #
-# No secrets required — the anon key lives in src/config.js (intentionally
-# public; security is enforced by Row Level Security on the database).
+# Why a write, and why daily:
+#   - A read as the anon role returns 0 rows under RLS, and Supabase does not
+#     reliably count that as activity (the project paused right after a
+#     "successful" read-ping). Updating a row is an unambiguous activity signal.
+#   - GitHub's scheduled runs are best-effort: they can be delayed by hours or
+#     dropped, and GitHub disables schedules after 60 days with no repo commits.
+#     Running daily leaves ~6 days of missed-run slack inside the 7-day window.
 #
-# To trigger manually: Actions tab → "Keep Supabase Alive" → Run workflow.
+# No secrets required — the public anon key lives in src/config.js; the write is
+# a single-row UPDATE on the keep_alive table (migration 20260708000000), which
+# grants UPDATE to anon and is capped at one row by a singleton constraint.
+#
+# To trigger manually: Actions tab -> "keep-supabase-alive" -> Run workflow.
 
 on:
   schedule:
-    #        ┌─ minute  ┌─ hour  ┌─ day-of-month  ┌─ month  ┌─ day-of-week
-    #        │          │        │                 │         │
-    - cron: "0          12       1,6,11,16,21,26   *         *"
-    # Runs on the 1st, 6th, 11th, 16th, 21st, 26th of every month at noon UTC.
-    # Worst-case gap is 5 days — well within the 7-day inactivity window.
+    - cron: "0 12 * * *"   # every day at noon UTC
   workflow_dispatch:
 
 jobs:
@@ -28,31 +33,34 @@ jobs:
       - name: Ping database
         run: |
           python3 - <<'EOF'
-          import re, sys, urllib.request, urllib.error
+          import json, re, sys, datetime, urllib.request, urllib.error
 
           text = open("src/config.js").read()
           url  = re.search(r"SUPABASE_URL\s+=\s+'([^']+)'", text).group(1)
           key  = re.search(r"SUPABASE_ANON_KEY\s+=\s+'([^']+)'", text).group(1)
 
-          print(f"Pinging {url} …")
-          # Query the attempts table with the anon key.
-          # RLS ensures 0 rows are returned (auth.uid() is NULL for anon
-          # requests and never matches any user_id), but the query still
-          # reaches the database — which is what prevents the free-plan pause.
-          # Requires: grant select on attempts to anon  (migration 20260627000000)
+          now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+          print(f"Pinging {url} (write) ...")
+
+          # UPDATE the singleton keep_alive row. Prefer: return=minimal so no
+          # SELECT grant is needed; a 2xx (204) means the write reached Postgres.
           req = urllib.request.Request(
-              f"{url}/rest/v1/attempts?select=count",
+              f"{url}/rest/v1/keep_alive?id=eq.1",
+              method="PATCH",
+              data=json.dumps({"pinged_at": now}).encode(),
               headers={
                   "apikey": key,
                   "Authorization": f"Bearer {key}",
-                  "Accept": "application/json",
+                  "Content-Type": "application/json",
+                  "Prefer": "return=minimal",
               },
           )
           try:
               with urllib.request.urlopen(req) as resp:
-                  print(f"Database is active (HTTP {resp.status}).")
+                  print(f"Database write succeeded (HTTP {resp.status}).")
           except urllib.error.HTTPError as exc:
-              print(f"::warning::HTTP {exc.code} — the project may already be paused.")
-              print("Visit https://supabase.com/dashboard to check the project status.")
+              body = exc.read().decode(errors="replace")
+              print(f"::warning::HTTP {exc.code} — {body}")
+              print("The project may be paused. Check https://supabase.com/dashboard")
               sys.exit(1)
           EOF
