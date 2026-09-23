@@ -58,7 +58,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -92,8 +92,16 @@ def _require_env(name: str) -> str:
 
 
 def _api(method: str, url: str, service_role_key: str,
-         body: Optional[dict] = None) -> "dict | list":
-    """Make a JSON request to the Supabase REST or Auth Admin API."""
+         body: Optional[dict] = None,
+         tolerate: Tuple[int, ...] = ()) -> "dict | list":
+    """
+    Make a JSON request to the Supabase REST or Auth Admin API.
+
+    Any HTTP error aborts the script, except for the status codes listed in
+    `tolerate`: those return the parsed error body so the caller can decide
+    what to do. Without this every HTTPError exits here, which left the
+    "user already exists" recovery in import-data unreachable.
+    """
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(
         url,
@@ -112,6 +120,11 @@ def _api(method: str, url: str, service_role_key: str,
             return json.loads(resp.read())
     except urllib.error.HTTPError as exc:
         body_text = exc.read().decode(errors="replace")
+        if exc.code in tolerate:
+            try:
+                return json.loads(body_text)
+            except ValueError:
+                return {"msg": body_text}
         sys.exit(f"HTTP {exc.code} {exc.reason} → {url}\n{body_text}")
 
 
@@ -132,6 +145,20 @@ def _paginate_users(base_url: str, key: str) -> List[dict]:
             break
         page += 1
     return users
+
+
+def _display_path(path: Path) -> str:
+    """
+    Render a path for logging: repo-relative when it sits inside the repo,
+    absolute otherwise. Path.relative_to() raises ValueError for anything
+    outside REPO_ROOT (and for any relative input), so calling it directly on
+    a user-supplied --backup/--out value crashed before any work was done.
+    """
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(resolved)
 
 
 def _latest_backup() -> Optional[Path]:
@@ -181,7 +208,7 @@ def cmd_export(args: argparse.Namespace) -> None:
     }
     out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
 
-    print(f"\nBackup written → {out_path.relative_to(REPO_ROOT)}")
+    print(f"\nBackup written → {_display_path(out_path)}")
     print(f"  {len(users)} users, {len(attempts)} attempts")
 
 
@@ -206,7 +233,7 @@ def cmd_import_data(args: argparse.Namespace) -> None:
 
     # Resolve backup file.
     if args.backup:
-        backup_path = Path(args.backup)
+        backup_path = Path(args.backup).expanduser().resolve()
     else:
         backup_path = _latest_backup()
         if backup_path is None:
@@ -215,7 +242,7 @@ def cmd_import_data(args: argparse.Namespace) -> None:
     if not backup_path.exists():
         sys.exit(f"ERROR: Backup file not found: {backup_path}")
 
-    print(f"Importing from backup: {backup_path.relative_to(REPO_ROOT)}")
+    print(f"Importing from backup: {_display_path(backup_path)}")
     payload = json.loads(backup_path.read_text())
     users: list[dict] = payload["users"]
     attempts: list[dict] = payload["attempts"]
@@ -240,6 +267,10 @@ def cmd_import_data(args: argparse.Namespace) -> None:
                 "email_confirm": True,   # skip confirmation email; user resets password
                 "user_metadata": {"migrated": True},
             },
+            # A duplicate email is expected when resuming an import that died
+            # partway (accounts created, attempts not yet inserted). Recover by
+            # mapping the existing account below instead of aborting.
+            tolerate=(409, 422),
         )
 
         if isinstance(resp, dict) and resp.get("id"):
